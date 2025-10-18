@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Havenly - Your Private Escape. On Demand.</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        /* --- CSS STYLES --- */
+
+        /* 1. Root Variables & Global Styles */
+        :root {
+            --netflix-red: #E50914;
+            --dark-bg: #101010;
+            --accent-glow: #00f2ea;
+            /* A new accent color for a unique look */
+            --text-white: #f5f5f5;
+            --text-gray: #aaa;
+            --card-bg: #1a1a1a;
+            --font-heading: 'Bebas Neue', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-white);
+            font-family: var(--font-body);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            /* Prevent horizontal scroll from animations */
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 0;
+        }
+
+        /* 2. Header & Navigation */
+        .header {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            z-index: 1000;
+            transition: background-color 0.4s ease, border-bottom 0.4s ease;
+        }
+
+        .header.scrolled {
+            background-color: rgba(16, 16, 16, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            color: var(--netflix-red);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a {
+            position: relative;
+            color: var(--text-gray);
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-white);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: linear-gradient(90deg, var(--netflix-red), var(--accent-glow));
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-red {
+            background: var(--netflix-red);
+            color: var(--text-white);
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
+        }
+
+        .btn-red:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(229, 9, 20, 0.7);
+        }
+
+        /* 3. Hero Section - With Animated Gradient */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(315deg, rgba(20, 20, 20, 1) 30%, rgba(229, 9, 20, 0.4) 100%),
+                linear-gradient(45deg, rgba(20, 20, 20, 1) 40%, rgba(0, 242, 234, 0.3) 100%);
+            background-size: 200% 200%;
+            animation: gradient-animation 15s ease infinite;
+            z-index: 1;
+        }
+
+        @keyframes gradient-animation {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        #hero h1 {
+            font-size: 6rem;
+            line-height: 1;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--text-white), #ccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #hero h3 {
+            font-size: 1.5rem;
+            color: var(--text-gray);
+            font-family: var(--font-body);
+            font-weight: 400;
+            margin-bottom: 50px;
+        }
+
+        .booking-widget {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            background: rgba(30, 30, 30, 0.5);
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .booking-widget .input-group {
+            display: flex;
+            align-items: center;
+            background: #222;
+            padding: 0 15px;
+            border-radius: 8px;
+        }
+
+        .booking-widget .input-group i {
+            color: var(--text-gray);
+            margin-right: 10px;
+        }
+
+        .booking-widget input {
+            padding: 15px 0;
+            border: none;
+            background: transparent;
+            color: var(--text-white);
+            font-family: var(--font-body);
+            font-size: 1rem;
+        }
+
+        .booking-widget input:focus {
+            outline: none;
+        }
+
+        /* 4. Categories Section - With Unique Clip-Path */
+        #categories h2 {
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .category-card {
+            position: relative;
+            height: 450px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.4s ease;
+            clip-path: polygon(0 0, 100% 5%, 100% 100%, 0 95%);
+        }
+
+        .category-card:hover {
+            transform: scale(1.05);
+        }
+
+        .category-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .category-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 1) 20%, transparent 80%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 30px;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+        }
+
+        .category-card:hover .card-overlay {
+            opacity: 1;
+        }
+
+        .card-overlay h3 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            transform: translateY(20px);
+            transition: transform 0.4s ease;
+        }
+
+        .card-overlay p {
+            color: var(--text-gray);
+            font-size: 1rem;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.4s ease 0.1s, opacity 0.4s ease 0.1s;
+        }
+
+        .category-card:hover .card-overlay h3,
+        .category-card:hover .card-overlay p {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 5. How It Works Section */
+        #how-it-works {
+            background-color: #0a0a0a;
+        }
+
+        #how-it-works h2 {
+            text-align: center;
+            font-size: 3.5rem;
+            margin-bottom: 70px;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            text-align: center;
+        }
+
+        .step .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(45deg, var(--netflix-red), var(--accent-glow));
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .step:hover .icon-wrapper {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px var(--accent-glow), 0 0 25px var(--netflix-red);
+        }
+
+        .step i {
+            font-size: 2.5rem;
+            color: var(--dark-bg);
+        }
+
+        .step h3 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            color: var(--text-gray);
+            line-height: 1.7;
+        }
+
+        /* 6. On-Scroll Reveal Animations */
+        .reveal {
+            position: relative;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 1s cubic-bezier(0.6, 0.2, 0.1, 1), opacity 0.8s ease;
+        }
+
+        .reveal.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 7. Footer */
+        .footer {
+            background-color: #000;
+            padding: 50px 5%;
+            text-align: center;
+            color: var(--text-gray);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-links {
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-white);
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+        }
+
+        /* 8. Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            #hero h1 {
+                font-size: 4rem;
+            }
+
+            #hero h3 {
+                font-size: 1.2rem;
+            }
+
+            .booking-widget {
+                flex-direction: column;
+            }
+
+            .booking-widget .input-group,
+            .booking-widget .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .container {
+                padding: 80px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header" id="header">
+        <a href="#" class="logo">HAVENLY</a>
+        <nav class="nav-links">
+            <a href="#categories">Experiences</a>
+            <a href="#how-it-works">How It Works</a>
+        </nav>
+        <a href="#" class="btn btn-red">Sign Up</a>
+    </header>
+
+    <section id="hero">
+        <div class="hero-content">
+            <h1>YOUR PRIVATE ESCAPE. ON DEMAND.</h1>
+            <h3>Game. Rest. Watch. Book a personal haven for any mood, by the hour.</h3>
+            <div class="booking-widget">
+                <div class="input-group">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <input type="text" placeholder="Downtown">
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <input type="date" value="2025-10-18">
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-clock"></i>
+                    <input type="time" value="14:00">
+                </div>
+                <a href="#" class="btn btn-red">Find a Room</a>
+            </div>
+        </div>
+    </section>
+
+    <main>
+        <section id="categories" class="container">
+            <h2 class="reveal">CHOOSE YOUR EXPERIENCE</h2>
+            <div class="category-grid">
+                <div class="category-card reveal">
+                    <img src="https://picsum.photos/600/800?random=1&grayscale" alt="Gaming Room">
+                    <div class="card-overlay">
+                        <h3>GAME</h3>
+                        <p>Zero lag, zero distractions. Step into our fully-equipped battle stations.</p>
+                    </div>
+                </div>
+                <div class="category-card reveal">
+                    <img src="https://picsum.photos/600/800?random=2&grayscale" alt="Resting Pod">
+                    <div class="card-overlay">
+                        <h3>REST</h3>
+                        <p>Escape the noise. Recharge in total silence and comfort in our relaxation pods.</p>
+                    </div>
+                </div>
+                <div class="category-card reveal">
+                    <img src="https://picsum.photos/600/800?random=3&grayscale" alt="Movie Room">
+                    <div class="card-overlay">
+                        <h3>WATCH</h3>
+                        <p>Your personal cinema awaits. Immerse yourself with 4K visuals and surround sound.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works">
+            <div class="container">
+                <h2 class="reveal">YOUR ESCAPE IN 3 EASY STEPS</h2>
+                <div class="steps-grid">
+                    <div class="step reveal">
+                        <div class="icon-wrapper"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <h3>1. Find Your Haven</h3>
+                        <p>Browse rooms by experience, location, and availability.</p>
+                    </div>
+                    <div class="step reveal">
+                        <div class="icon-wrapper"><i class="fa-solid fa-credit-card"></i></div>
+                        <h3>2. Book & Pay Securely</h3>
+                        <p>Choose your time slot and confirm your booking in seconds.</p>
+                    </div>
+                    <div class="step reveal">
+                        <div class="icon-wrapper"><i class="fa-solid fa-key"></i></div>
+                        <h3>3. Unlock & Enjoy</h3>
+                        <p>Receive a digital key on your phone. Your private escape is ready.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#">About Us</a>
+            <a href="#">FAQ</a>
+            <a href="#">Contact</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+        <p>&copy; 2025 Havenly. All Rights Reserved. Located in Dipolog City, Philippines.</p>
+    </footer>
+
+    <script>
+        // --- Sticky Header ---
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // --- On-Scroll Reveal Animation ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1 // Trigger when 10% of the element is visible
+        });
+
+        const revealElements = document.querySelectorAll('.reveal');
+        revealElements.forEach((el) => observer.observe(el));
+    </script>
+
+</body>
+
+</html>
