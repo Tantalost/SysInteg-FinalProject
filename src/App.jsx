@@ -1,12 +1,8 @@
-import { useState } from 'react'
+import Home from './pages/Home.jsx'
 
 function App() {
-
-  return (<div className="App">
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
-  </div>
+  return (
+  <Home />
   )
 }
 
