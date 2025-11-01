@@ -28,6 +28,9 @@ import roomImg2 from './roomImg2.jpg'
 import roomImg3 from './roomImg3.jpg'
 import roomImg4 from './roomImg4.jpg'
 import regImage from './regImage.jpg'
+import limitedOfferCardImg1 from "./limitedOfferCardImg1.jpg";
+import limitedOfferCardImg2 from "./limitedOfferCardImg2.jpg";
+import limitedOfferCardImg3 from "./limitedOfferCardImg3.jpg";
 import addIcon from "./addIcon.svg";
 import dashboardIcon from "./dashboardIcon.svg";
 import listIcon from "./listIcon.svg";
@@ -69,6 +72,9 @@ export const assets = {
     uploadArea,
     totalBookingIcon,
     totalRevenueIcon,
+    limitedOfferCardImg1,
+    limitedOfferCardImg2,
+    limitedOfferCardImg3,
 }
 
 export const roomTypes = [
@@ -84,7 +90,12 @@ export const durations = [
     "4 hours",
 ];
 
-
+// Limited  Offers Dummy Data
+export const limitedOffers = [
+    { _id: 1, title: "KTV Room",  priceOff: 25, expiryDate: "Aug 31", image: limitedOfferCardImg1 },
+    { _id: 2, title: "Movie Room",  priceOff: 20, expiryDate: "Sep 20", image: limitedOfferCardImg2 },
+    { _id: 3, title: "Game Room",  priceOff: 30, expiryDate: "Sep 25", image: limitedOfferCardImg3 },
+]
 
 // Testimonials Dummy Data
 export const testimonials = [
