@@ -8,7 +8,7 @@ const FeaturedRoom = () => {
     const navigate = useNavigate();
 
     return (
-        <div className='flex flex-col items-center px-6 md:px-16 lg:px-24 bg-slate-50 py-20'>
+        <div className='flex flex-col items-center px-6 md:px-16 lg:px-24 bg-slate-50 py-20 bg-gradient-to-b'>
 
             <Title title='Featured Rooms' subTitle="We've paired our incredible rooms with featured movies and games that'll transport you to another world. Whether you're a gamer on a quest or a cinephile looking for a scene change, your next adventure starts here." />
 
