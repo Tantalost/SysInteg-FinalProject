@@ -46,7 +46,7 @@ const AllRooms = () => {
 
     return (
         <div className='flex flex-col-reverse lg:flex-row items-start 
-            justify-between pt-28 md:pt-35 px-4 md:px-16 lg:px-24 xl:px-32'>
+            gap-10 pt-28 md:pt-35 px-4 md:px-16 lg:px-24 xl:px-32'>
 
             <div>
                 <div className='flex flex-col items-start text-left'>
@@ -85,7 +85,7 @@ const AllRooms = () => {
                                     </div>
                                 ))}
                             </div>
-                            <p className='text-xl font-medium text-gray-700'>${room.pricePerNight} /hour</p>
+                            <p className='text-xl font-medium text-gray-700'>₱{room.pricePerNight} /hour</p>
                         </div>
                     </div>
                 ))}
@@ -115,7 +115,7 @@ const AllRooms = () => {
                     <div className='px-5 pt-5'>
                         <p className='font-medium text-gray-800 pb-2'>Price Range</p>
                         {priceRanges.map((range, index) => (
-                            <CheckBox key={index} label={`$ ${range}`} />
+                            <CheckBox key={index} label={`₱ ${range}`} />
                         ))}
                     </div>
                     <div className='px-5 pt-5 pb-7'>

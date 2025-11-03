@@ -116,7 +116,7 @@ export const facilityIcons = {
 // For Room Details Page
 export const roomCommonData = [
     { icon: assets.homeIcon, title: "Clean & Safe Stay", description: "A well-maintained and hygienic space just for you." },
-    { icon: assets.badgeIcon, title: "Enhanced Cleaning", description: "This host follows Staybnb's strict cleaning standards." },
+    { icon: assets.badgeIcon, title: "Enhanced Cleaning", description: "The room follows Staybnb's strict cleaning standards." },
     { icon: assets.locationFilledIcon, title: "Excellent Location", description: "90% of guests rated the location 5 stars." },
     { icon: assets.heartIcon, title: "Smooth Check-In", description: "100% of guests gave check-in a 5-star rating." },
 ];
@@ -154,7 +154,7 @@ export const roomsDummyData = [
     {
         "_id": "67f7647c197ac559e4089b96",
         "property": propertyDummyData,
-        "roomType": "Double Bed",
+        "roomType": "Gaming Room",
         "pricePerNight": 399,
         "amenities": ["Room Service", "Mountain View", "Pool Access"],
         "images": [roomImg1, roomImg2, roomImg3, roomImg4],
@@ -166,7 +166,7 @@ export const roomsDummyData = [
     {
         "_id": "67f76452197ac559e4089b8e",
         "property": propertyDummyData,
-        "roomType": "Double Bed",
+        "roomType": "Movie Room",
         "pricePerNight": 299,
         "amenities": ["Room Service", "Mountain View", "Pool Access"],
         "images": [roomImg2, roomImg3, roomImg4, roomImg1],
@@ -178,7 +178,7 @@ export const roomsDummyData = [
     {
         "_id": "67f76406197ac559e4089b82",
         "property": propertyDummyData,
-        "roomType": "Double Bed",
+        "roomType": "KTV Room",
         "pricePerNight": 249,
         "amenities": ["Free WiFi", "Free Breakfast", "Room Service"],
         "images": [roomImg3, roomImg4, roomImg1, roomImg2],
@@ -199,7 +199,7 @@ export const userBookingsDummyData = [
         "room": roomsDummyData[1],
         "property": propertyDummyData,
         "checkInDate": "2025-04-30T00:00:00.000Z",
-        "checkOutDate": "2025-05-01T00:00:00.000Z",
+        "Duration": "4",
         "totalPrice": 299,
         "guests": 1,
         "status": "pending",
@@ -215,7 +215,7 @@ export const userBookingsDummyData = [
         "room": roomsDummyData[0],
         "property": propertyDummyData,
         "checkInDate": "2025-04-27T00:00:00.000Z",
-        "checkOutDate": "2025-04-28T00:00:00.000Z",
+        "Duration": "1",
         "totalPrice": 399,
         "guests": 1,
         "status": "pending",
@@ -228,10 +228,10 @@ export const userBookingsDummyData = [
     {
         "_id": "67f76810994a731e97d3b8b4",
         "user": userDummyData,
-        "room": roomsDummyData[3],
+        "room": roomsDummyData[2],
         "property": propertyDummyData,
         "checkInDate": "2025-04-11T00:00:00.000Z",
-        "checkOutDate": "2025-04-12T00:00:00.000Z",
+        "Duration": "6",
         "totalPrice": 199,
         "guests": 1,
         "status": "pending",
