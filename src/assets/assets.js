@@ -37,6 +37,9 @@ import listIcon from "./listIcon.svg";
 import uploadArea from "./uploadArea.svg";
 import totalBookingIcon from "./totalBookingIcon.svg";
 import totalRevenueIcon from "./totalRevenueIcon.svg";
+import gamingImg1 from "./gamingImg1.jpg";
+import gamingImg2 from "./gamingImg2.jpg";
+import gamingImg3 from "./gamingImg3.jpg";
 
 
 export const assets = {
@@ -75,6 +78,9 @@ export const assets = {
     limitedOfferCardImg1,
     limitedOfferCardImg2,
     limitedOfferCardImg3,
+    gamingImg1,
+    gamingImg2,
+    gamingImg3,
 }
 
 export const roomTypes = [
@@ -139,7 +145,31 @@ export const userDummyData = {
 // Property Dummy Data
 export const propertyDummyData = {
     "_id": "67f76393197ac559e4089b72",
-    "name": "Urbanza Suites",
+    "name": "Gaming Room",
+    "address": "Main Road  123 Street , 23 Colony",
+    "contact": "+0123456789",
+    "owner": userDummyData,
+    "city": "Best Seller",
+    "createdAt": "2025-04-10T06:22:11.663Z",
+    "updatedAt": "2025-04-10T06:22:11.663Z",
+    "__v": 0
+}
+
+export const propertyDummyData1 = {
+    "_id": "67f76393197ac559e3219bf",
+    "name": "KTV Room",
+    "address": "Main Road  123 Street , 23 Colony",
+    "contact": "+0123456789",
+    "owner": userDummyData,
+    "city": "New York",
+    "createdAt": "2025-04-10T06:22:11.663Z",
+    "updatedAt": "2025-04-10T06:22:11.663Z",
+    "__v": 0
+}
+
+export const propertyDummyData2 = {
+    "_id": "393197ac559e4089b7223121",
+    "name": "Movie Room",
     "address": "Main Road  123 Street , 23 Colony",
     "contact": "+0123456789",
     "owner": userDummyData,
@@ -157,7 +187,7 @@ export const roomsDummyData = [
         "roomType": "Gaming Room",
         "pricePerNight": 399,
         "amenities": ["Room Service", "Mountain View", "Pool Access"],
-        "images": [roomImg1, roomImg2, roomImg3, roomImg4],
+        "images": [roomImg1, gamingImg1, gamingImg2, gamingImg3],
         "isAvailable": true,
         "createdAt": "2025-04-10T06:26:04.013Z",
         "updatedAt": "2025-04-10T06:26:04.013Z",
@@ -165,8 +195,8 @@ export const roomsDummyData = [
     },
     {
         "_id": "67f76452197ac559e4089b8e",
-        "property": propertyDummyData,
-        "roomType": "Movie Room",
+        "property": propertyDummyData1,
+        "roomType": "KTV Room",
         "pricePerNight": 299,
         "amenities": ["Room Service", "Mountain View", "Pool Access"],
         "images": [roomImg2, roomImg3, roomImg4, roomImg1],
@@ -177,8 +207,8 @@ export const roomsDummyData = [
     },
     {
         "_id": "67f76406197ac559e4089b82",
-        "property": propertyDummyData,
-        "roomType": "KTV Room",
+        "property": propertyDummyData2,
+        "roomType": "Movie Room",
         "pricePerNight": 249,
         "amenities": ["Free WiFi", "Free Breakfast", "Room Service"],
         "images": [roomImg3, roomImg4, roomImg1, roomImg2],
@@ -197,11 +227,11 @@ export const userBookingsDummyData = [
         "_id": "67f76839994a731e97d3b8ce",
         "user": userDummyData,
         "room": roomsDummyData[1],
-        "property": propertyDummyData,
+        "property": propertyDummyData1,
         "checkInDate": "2025-04-30T00:00:00.000Z",
         "Duration": "4",
         "totalPrice": 299,
-        "guests": 1,
+        "guests": 5,
         "status": "pending",
         "paymentMethod": "Stripe",
         "isPaid": true,
@@ -217,7 +247,7 @@ export const userBookingsDummyData = [
         "checkInDate": "2025-04-27T00:00:00.000Z",
         "Duration": "1",
         "totalPrice": 399,
-        "guests": 1,
+        "guests": 3,
         "status": "pending",
         "paymentMethod": "Pay At Site",
         "isPaid": false,
@@ -229,7 +259,7 @@ export const userBookingsDummyData = [
         "_id": "67f76810994a731e97d3b8b4",
         "user": userDummyData,
         "room": roomsDummyData[2],
-        "property": propertyDummyData,
+        "property": propertyDummyData2,
         "checkInDate": "2025-04-11T00:00:00.000Z",
         "Duration": "6",
         "totalPrice": 199,

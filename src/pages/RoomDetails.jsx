@@ -40,7 +40,7 @@ const RoomDetails = () => {
                         <img onClick={()=> setMainImage(image)}
                         key={index} src={image} alt="Room Image"
                         className={`w-full rounded-xl shadow-md object-cover 
-                        cursor-pointer ${mainImage === image && `outline-3 
+                        cursor-pointer w-full h-full ${mainImage === image && `outline-3 
                         outline-orange-500`}`} />
                     ))}
                 </div>
