@@ -6,6 +6,7 @@ import RoomDetails from './pages/RoomDetails.jsx';
 import Footer from './components/Footer.jsx';
 import MyBookings from './pages/MyBookings.jsx';
 import NotFound from './components/NotFound.jsx';
+import Rates from './pages/Rates.jsx'
 
 const App = () => {
 
@@ -18,6 +19,7 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/rooms' element={<AllRooms />} />
+          <Route path='/rates' element={<Rates />} />
           <Route path='/rooms/:id' element={<RoomDetails />} />
           <Route path='/my-bookings' element={<MyBookings />} />
           <Route path='/*' element={<NotFound />} />
