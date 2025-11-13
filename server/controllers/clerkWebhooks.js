@@ -1,7 +1,7 @@
-import User from '../models/userModel.js';
+import User from '../models/Users.js';
 import { Webhook } from 'svix';
 
-const clearkWebhookSecret = async (req, res) => {
+const clerkWebhooks = async (req, res) => {
   try {
     const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
@@ -23,27 +23,25 @@ const clearkWebhookSecret = async (req, res) => {
     }
 
     switch(type) {
-      case 'user.created': {
-          await User.create(userData)
-          break;
-      }
-      case 'user.updated': {
-          await User.findByIdandUpdate(data.id,userData);
-          break;
-      }
-      case 'user.deleted': {
-          await User.findByIdandDelete(userData)
-          break;
-      }
+      case 'user.created':
+        await User.create(userData);
+        break;
+      case 'user.updated':
+        await User.findByIdAndUpdate(data.id, userData);
+        break;
+      case 'user.deleted':
+        await User.findByIdAndDelete(data.id);
+        break;
       default:
         break;
     }
-    res.json({sucess: true, message: 'Webhook received'})
+
+    res.json({success: true, message: 'Webhook received'})
 
   } catch (error) {
     console.log(error.message);
-    res.json({sucess: false, message: 'error.message'})
+    res.json({success: false, message: error.message})
   }
 }
 
-export default clearkWebhooks;
+export default clerkWebhooks;
