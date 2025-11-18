@@ -25,9 +25,6 @@ const clerkWebhooks = async (req, res) => {
     switch(type) {
       case 'user.created':
         await User.create(userData);
-        console.log("Creating user:", userData);
-        const created = await User.create(userData);
-        console.log("User created in DB:", created);
         break;
       case 'user.updated':
         await User.findByIdAndUpdate(data.id, userData);
