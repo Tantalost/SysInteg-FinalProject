@@ -12,15 +12,21 @@ import Layout from './pages/admin/Layout.jsx';
 import ListRoom from './pages/admin/ListRoom.jsx';
 import AddRoom from './pages/admin/AddRoom.jsx';
 import Dashboard from './pages/admin/Dashboard.jsx';
+import AddRoom from './pages/admin/AddRoom.jsx';
+import ListRoom from './pages/admin/ListRoom.jsx';
+import { Toaster } from 'react-hot-toast';
 
 const App = () => {
 
   const isAdminPath = useLocation().pathname.includes('admin');
+  const {showRoomReg} = useAppContext();
+
 
   return (
     <div>
+      <Toaster />
       {!isAdminPath && <Navbar />}
-      {false && <RoomReg />}
+      {showRoomReg && <RoomReg />}
       <div className='min-h-[70vh]'>
         <Routes>
           <Route path='/' element={<Home />} />
@@ -30,9 +36,9 @@ const App = () => {
           <Route path='/my-bookings' element={<MyBookings />} />
           <Route path='/*' element={<NotFound />} />
           <Route path='/admin' element={<Layout />}>
-              <Route index element={<Dashboard />} />
-              <Route path='add-room' element={<AddRoom />} />
-              <Route path='list-room' element={<ListRoom />} />
+            <Route index element={<Dashboard />} />
+            <Route path='add-room' element={<AddRoom />} />
+            <Route path='list-room' element={<ListRoom />} />
           </Route>
         </Routes>
       </div>
