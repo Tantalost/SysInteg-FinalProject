@@ -61,7 +61,7 @@ const RoomDetails = () => {
                         </div>
                     </div>
                     {/* Room Price */}
-                    <p className='text-2xl font-medium'>₱{room.pricePerNight}/hour</p>
+                    <p className='text-2xl font-medium'>₱{room.pricePerHour}/hour</p>
             </div>
 
 

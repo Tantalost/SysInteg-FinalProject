@@ -7,6 +7,7 @@ import clearkWebhooks from './controllers/clerkWebhooks.js';
 import userRouter from './routes/userRoutes.js';
 import roomRouter from './routes/roomRoutes.js';
 import connectCloudinary from './configs/cloudinary.js';
+import propertyRouter from './routes/propertyRoutes.js';
 
 
 connectDB()
@@ -25,6 +26,7 @@ app.use("/api/clerk", clearkWebhooks);
 app.get('/', (req, res)=> res.send("API is working"))
 app.use('/api/user', userRouter)
 app.use('/api/rooms', roomRouter)
+app.use('/api/properties', propertyRouter)
 
 const PORT = process.env.PORT || 3000;
 
