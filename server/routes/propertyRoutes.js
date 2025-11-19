@@ -1,7 +1,7 @@
 import express from 'express';
 import upload from '../middleware/uploadMiddleware.js';
 import { protect } from '../middleware/authMiddleware.js';
-import { createProperty, getProperties, togglePropertyAvailability } from '../controllers/propertyController.js';
+import { createProperty, getProperties, togglePropertyAvailability, getAdminProperties } from '../controllers/propertyController.js';
 import { get } from 'mongoose';
 
 const propertyRouter = express.Router();

@@ -1,4 +1,3 @@
-import { dashboardDummyData } from "../../src/assets/assets";
 import Booking from "../models/Booking.js";
 import Property from "../models/Property.js";
 import Room from "../models/Room.js";

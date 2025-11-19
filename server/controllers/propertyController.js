@@ -1,5 +1,5 @@
 import { response } from "express";
-import Room from "../models/Room";
+import Room from "../models/Room.js";
 import { v2 as cloudinary } from "cloudinary";
 import Property from "../models/Property.js";
 

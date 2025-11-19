@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { assets, roomTypes } from '../assets/assets'
 import { useAppContext } from '../context/AppContext.jsx'
 
