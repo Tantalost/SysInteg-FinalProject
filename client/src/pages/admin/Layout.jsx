@@ -2,8 +2,18 @@ import React from 'react'
 import Navbar from '../../components/admin/Navbar'
 import Sidebar from '../../components/admin/Sidebar'
 import { Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useAppContext } from '../../context/appContext'
+
 
 const Layout = () => {
+  const {isAdmin, navigate} = useAppContext();
+
+  useEffect(()=>{
+    if(!isAdmin){
+      navigate('/')
+    }
+  },[isAdmin])
   return (
     <div className='flex flex-col h-screen'>
       <Navbar/>
