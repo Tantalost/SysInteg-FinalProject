@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import Title from '../../components/Title'
 import { assets } from '../../assets/assets'
+import { useAppContext } from '../../context/AppContext'
+import { toast } from 'react-hot-toast'
 
 
 const AddRoom = () => {
@@ -48,7 +50,7 @@ const AddRoom = () => {
       })
       const { data } = await axios.post('/api/rooms/', formData, {
         headers:
-          { Authorization: `Bearer ${await getToken}` }
+          { Authorization: `Bearer ${await getToken()}` }
       })
 
       if (data.success) {
@@ -78,16 +80,16 @@ const AddRoom = () => {
       setLoading(false);
     }
   }
-  
+
   return (
     <form onSubmit={onSubmitHandler}>
       <Title align='left' font='outfit' title='Add Room' />
       <p className='text-gray-800 mt-10'>Images</p>
       <div className='grid grid-cols-2 sm:flex gap-4 my-2 flex-wrap'>
         {Object.keys(images).map((key) => (
-          <label htmlFor={`roomImage${key}`} key={key}>
+          <label htmlFor={`roomImage${key}`} key={key} className='cursor-pointer w-32 h-32'>
             <img src={images[key] ? URL.createObjectURL(images[key]) : assets.uploadArea} alt="" />
-            <input type="file" accept='image/*' id={`roomImages${key}`} hidden onChange={e => setImages({ ...images, [key]: e.target.files[0] })} />
+            <input type="file" accept='image/*' id={`roomImage${key}`} hidden onChange={e => setImages({ ...images, [key]: e.target.files[0] })} />
           </label>
         ))}
       </div>
@@ -120,8 +122,8 @@ const AddRoom = () => {
           </div>
         ))}
       </div>
-      <button className='bg-primary text-white px-8 py-2 rouneded mt-8 cursor-pointer'>
-        Add Room
+      <button className='bg-primary text-white px-8 py-2 rouneded mt-8 cursor-pointerd' disabled={loading}>
+        {loading ? 'Adding....' : "Add Room"}
       </button>
     </form>
   )
