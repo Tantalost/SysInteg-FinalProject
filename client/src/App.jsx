@@ -13,7 +13,7 @@ import ListRoom from './pages/admin/ListRoom.jsx';
 import AddRoom from './pages/admin/AddRoom.jsx';
 import Dashboard from './pages/admin/Dashboard.jsx';
 import { Toaster } from 'react-hot-toast';
-import { useAppContext } from './context/appContext.jsx';
+import { useAppContext } from './context/AppContext.jsx';
 
 const App = () => {
 
