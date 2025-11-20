@@ -22,7 +22,7 @@ export const AppProvider = ({children})=>{
 
     const fetchUser = async () => {
         try {
-           const {data} = await axios.get('/api/user', {headers: {Authorization: 'Bearer ₱{await getToken()}' }})
+           const {data} = await axios.get('/api/user', {headers: {Authorization: 'Bearer ${await getToken()}' }})
            if(data.success){
             setIsAdmin(data.role === "roomAdmin");
             setSearchRooms(data.recentSearchedRooms)
@@ -36,11 +36,28 @@ export const AppProvider = ({children})=>{
         }
     }
 
-    useEffect(()=>{
-        if(user){
+    const syncUserWithBackend = async () => {
+        try {
+            const token = await getToken();
+            await axios.post('/api/user/create', 
+                {
+                    username: user.fullName || user.firstName,
+                    email: user.primaryEmailAddress.emailAddress,
+                    image: user.imageUrl
+                },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
             fetchUser();
+        } catch (error) {
+            toast.error(error.message);
         }
-    },[user])
+    }
+
+    useEffect(() => {
+        if (user) {
+            syncUserWithBackend();
+        }
+    }, [user]);
 
     const value = {
         currency, navigate, user, getToken,
