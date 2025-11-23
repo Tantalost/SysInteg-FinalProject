@@ -6,7 +6,7 @@ import { get } from 'mongoose';
 
 const propertyRouter = express.Router();
 
-propertyRouter.post('/', upload.array("images", 4), protect, createProperty)
+propertyRouter.post('/', protect, upload.array("images", 4), createProperty)
 propertyRouter.get('/', getProperties)
 propertyRouter.get('/admin', protect, getAdminProperties)
 propertyRouter.get('/toggle-availability', protect, togglePropertyAvailability)

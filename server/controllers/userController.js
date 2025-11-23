@@ -51,3 +51,23 @@ export const createUser = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
+
+// PATCH /api/user/make-admin/:id
+export const promoteToAdmin = async (req, res) => {
+    try {
+        const requester = req.user; // comes from your protect middleware
+        if (requester.role !== 'admin') {
+            return res.status(403).json({ success: false, message: "Unauthorized" });
+        }
+
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+        user.role = 'admin';
+        await user.save();
+
+        res.json({ success: true, message: `${user.username} is now an admin` });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};

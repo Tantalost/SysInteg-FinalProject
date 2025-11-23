@@ -58,25 +58,24 @@ const Testimonials = () => {
 
             <div className='flex flex-col items-center px-6 md:px-16 lg:px-24 bg-slate-50 pt-20 pb-20 '>
                 <Title title="What Our Customers Say" subTitle='Here are a few of the testimonials' />
-            <div className="marquee-row w-full mx-auto max-w-5xl overflow-hidden relative">
-                <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none bg-gradient-to-r from-white to-transparent"></div>
-                <div className="marquee-inner flex transform-gpu min-w-[200%] pt-10 pb-5">
-                    {[...testimonials, ...testimonials].map((card) => (
-                        <CreateCard key={card.id + "-1"} card={card} />
-                    ))}
+                <div className="marquee-row w-full mx-auto max-w-5xl overflow-hidden relative">
+                    <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none bg-gradient-to-r from-white to-transparent"></div>
+                    <div className="marquee-inner flex transform-gpu min-w-[200%] pt-10 pb-5">
+                        {[...testimonials, ...testimonials].map((card, index) => (
+                            <CreateCard key={`${card.id}-${index}`} card={card} />))}
+                    </div>
+                    <div className="absolute right-0 top-0 h-full w-20 md:w-40 z-10 pointer-events-none bg-gradient-to-l from-white to-transparent"></div>
                 </div>
-                <div className="absolute right-0 top-0 h-full w-20 md:w-40 z-10 pointer-events-none bg-gradient-to-l from-white to-transparent"></div>
-            </div>
 
-            <div className="marquee-row w-full mx-auto max-w-5xl overflow-hidden relative">
-                <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none bg-gradient-to-r from-white to-transparent"></div>
-                <div className="marquee-inner marquee-reverse flex transform-gpu min-w-[200%] pt-10 pb-5">
-                    {[...testimonials, ...testimonials].map((card) => (
-                        <CreateCard key={card.id + "-2"} card={card} />
-                    ))}
+                <div className="marquee-row w-full mx-auto max-w-5xl overflow-hidden relative">
+                    <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none bg-gradient-to-r from-white to-transparent"></div>
+                    <div className="marquee-inner marquee-reverse flex transform-gpu min-w-[200%] pt-10 pb-5">
+                        {[...testimonials, ...testimonials].map((card, index) => (
+                            <CreateCard key={`${card.id}-reverse-${index}`} card={card} />
+                        ))}
+                    </div>
+                    <div className="absolute right-0 top-0 h-full w-20 md:w-40 z-10 pointer-events-none bg-gradient-to-l from-white to-transparent"></div>
                 </div>
-                <div className="absolute right-0 top-0 h-full w-20 md:w-40 z-10 pointer-events-none bg-gradient-to-l from-white to-transparent"></div>
-            </div>
             </div>
         </>
     )

@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets.js';
 import { useClerk, UserButton } from '@clerk/clerk-react';
 import { useAppContext } from '../context/AppContext.jsx';
@@ -24,14 +24,16 @@ const Navbar = () => {
     const { openSignIn } = useClerk()
     const location = useLocation()
 
-    const {user, navigate, isAdmin, setShowRoomReg} = useAppContext();
+    const { user } = useAppContext();
+    const navigate = useNavigate();
+
 
     useEffect(() => {
 
-        if(location.pathname !== '/'){
+        if (location.pathname !== '/') {
             setIsScrolled(true);
             return;
-        }else{
+        } else {
             setIsScrolled(false);
         }
         setIsScrolled(prev => location.pathname !== '/' ? true : prev);
@@ -59,11 +61,13 @@ const Navbar = () => {
                     </a>
                 ))}
                 {user && (
-                <button className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`} onClick={() => isAdmin ? navigate('/admin') : setShowRoomReg(true)}>
-                    {isAdmin ? 'Dashboard' : 'List Your Room'}
-                </button>
-                    )
-                }
+                    <button
+                        className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`}
+                        onClick={() => navigate('/admin')}
+                    >
+                        Dashboard
+                    </button>
+                )}
             </div>
 
             <div className="hidden md:flex items-center gap-4">
@@ -106,9 +110,11 @@ const Navbar = () => {
                     </a>
                 ))}
 
-                {user && <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
-                     onClick={() => isAdmin ? navigate('/admin') : setShowRoomReg(true)}>
-                    {isAdmin ? 'Dashboard' : 'List Your Room'}
+                {user && <button
+                    className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
+                    onClick={() => navigate('/admin')}
+                >
+                    Dashboard
                 </button>}
 
                 {!user && <button onClick={openSignIn} className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500">

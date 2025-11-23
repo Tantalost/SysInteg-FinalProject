@@ -1,7 +1,12 @@
-import React from 'react'
-import { assets, roomTypes } from '../assets/assets.js';
+import React, { useState } from 'react'
+import { assets } from '../assets/assets.js';
+import { useAppContext } from '../context/AppContext.jsx';
 
 const Hero = () => {
+
+    const {navigate, getToken, axios, setSearchedRoomTypes} = useAppContext();
+    const [roomTypes, setRoomTypes] = useState([])
+
     return (
         <div className='flex flex-col items-start justify-center px-6
     md:px-16 lg:px-24 xl:px-32 text-white bg-[url("/src/assets/hero-bg.jpg")] bg-no-repeat bg-cover bg-center h-screen'>

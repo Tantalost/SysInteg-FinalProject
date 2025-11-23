@@ -4,10 +4,13 @@ import Sidebar from '../../components/admin/Sidebar'
 import { Outlet } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useAppContext } from '../../context/AppContext'
+import { useNavigate } from 'react-router-dom';
+
 
 
 const Layout = () => {
-  const {isAdmin, navigate} = useAppContext();
+  const {isAdmin} = useAppContext();
+  const navigate = useNavigate();
 
   useEffect(()=>{
     if(!isAdmin){

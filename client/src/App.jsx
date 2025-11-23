@@ -1,5 +1,5 @@
 import Navbar from './components/Navbar.jsx'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { Route, Routes, useLocation, Navigate } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import AllRooms from './pages/AllRooms.jsx';
 import RoomDetails from './pages/RoomDetails.jsx';
@@ -18,9 +18,17 @@ import { useAppContext } from './context/AppContext.jsx';
 const App = () => {
 
   const isAdminPath = useLocation().pathname.includes('admin');
-  const {showRoomReg} = useAppContext();
+  const {showRoomReg, userData, loading} = useAppContext();
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
 
+  const hasRooms = userData && userData.rooms && userData.rooms.length > 0;
   return (
     <div>
       <Toaster />
@@ -36,7 +44,8 @@ const App = () => {
           <Route path='/*' element={<NotFound />} />
           <Route path='/admin' element={<Layout />}>
             <Route index element={<Dashboard />} />
-            <Route path='add-room' element={<AddRoom />} />
+
+            <Route path='add-room' element={hasRooms ? <Navigate to="/admin" replace /> : <AddRoom />} />
             <Route path='list-room' element={<ListRoom />} />
           </Route>
         </Routes>

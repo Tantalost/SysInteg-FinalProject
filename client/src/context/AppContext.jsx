@@ -12,27 +12,47 @@ const AppContext = createContext();
 export const AppProvider = ({children})=>{
 
     const currency = import.meta.env.VITE_CURRENCY || "₱";
-    const navigate = useNavigate();
     const {user} = useUser();
     const {getToken} = useAuth();
 
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(true);
     const [showRoomReg, setShowRoomReg] = useState(false);
     const [searchRooms, setSearchRooms] = useState([]);
+    const [properties, setProperties] = useState([])
+
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    const fetchProperties = async () =>{
+        try {
+            const {data} = await axios.get('/api/properties')
+            if (data.success){
+                setProperties(data.properties)
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
 
     const fetchUser = async () => {
         try {
-           const {data} = await axios.get('/api/user', {headers: {Authorization: 'Bearer ${await getToken()}' }})
+            const token = await getToken();
+           const {data} = await axios.get('/api/user', {headers: {Authorization: `Bearer ${token}` }})
            if(data.success){
-            setIsAdmin(data.role === "roomAdmin");
-            setSearchRooms(data.recentSearchedRooms)
+            setIsAdmin(data.role === "admin");
+            setSearchRooms(data.recentSearchedRooms);
+            setUserData(data.user);
            }else{
             // retry fetching user info afte 5 secs
-            setTimeout(()=>{
-                fetchUser()}, 5000)
+            setUserData(null);
            }
         } catch (error) {
-            toast.error(error.message);
+            console.log(error);
+            setUserData(null);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -56,13 +76,20 @@ export const AppProvider = ({children})=>{
     useEffect(() => {
         if (user) {
             syncUserWithBackend();
+        }else{
+            setLoading(false);
+            setUserData(null);
         }
     }, [user]);
 
+    useEffect(()=>{
+        fetchProperties();
+    },[])
+
     const value = {
-        currency, navigate, user, getToken,
+        currency, user, getToken,
         isAdmin, setIsAdmin, axios,
-        showRoomReg, setShowRoomReg, searchRooms, setSearchRooms,
+        showRoomReg, setShowRoomReg, searchRooms, setSearchRooms, userData, setUserData, loading, setLoading, properties, setProperties
     }
 
     return(
