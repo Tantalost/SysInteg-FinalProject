@@ -71,7 +71,7 @@ export const getProperties = async (req, res) => {
 // API to get all properties for a specific room (Admin Dashboard)
 export const getAdminProperties = async (req, res) => {
     try {
-        const roomData = await Room.findOne({ admin: req.auth.userId })
+        const roomData = await Room.findOne({ admin: req.auth().userId })
         if (!roomData) {
             return res.json({ success: true, properties: [] });
         }

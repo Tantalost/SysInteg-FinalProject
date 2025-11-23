@@ -83,7 +83,7 @@ export const getUserBookings = async (req, res) => {
 
 export const getRoomBookings = async (req, res) => {
     try {
-        const room = await Room.findOne({ admin: req.auth.userId });
+        const room = await Room.findOne({ admin: req.auth().userId });
         if (!room) {
             return res.json({ success: false, message: 'Room not found' });
         }

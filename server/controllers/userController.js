@@ -32,7 +32,7 @@ export const storeRecentSearchRooms = async (req, res) => {
 
 export const createUser = async (req, res) => {
     try {
-        const { userId } = req.auth; 
+        const { userId } = req.auth(); 
         const { username, email, image } = req.body; 
 
         let user = await User.findById(userId);

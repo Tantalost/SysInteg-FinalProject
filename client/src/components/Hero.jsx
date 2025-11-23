@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/assets.js';
+import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext.jsx';
 
 const Hero = () => {
