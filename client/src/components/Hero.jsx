@@ -4,8 +4,10 @@ import { useAppContext } from '../context/AppContext.jsx';
 
 const Hero = () => {
 
-    const {navigate, getToken, axios, setSearchedRoomTypes} = useAppContext();
+    const { getToken, axios, setSearchedRoomTypes} = useAppContext();
     const [roomTypes, setRoomTypes] = useState([])
+    const navigate = useNavigate();
+
 
     return (
         <div className='flex flex-col items-start justify-center px-6

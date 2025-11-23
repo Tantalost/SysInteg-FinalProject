@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext.jsx'
 
 const FeaturedRoom = () => {
-    const {properties, navigate} = useAppContext();
+    const {properties} = useAppContext();
+    const navigate = useNavigate();
 
     return properties.length > 0 && (
         <div className='flex flex-col items-center px-6 md:px-16 lg:px-24 bg-slate-50 py-20 bg-gradient-to-b'>

@@ -9,7 +9,7 @@ const propertyRouter = express.Router();
 propertyRouter.post('/', protect, upload.array("images", 4), createProperty)
 propertyRouter.get('/', getProperties)
 propertyRouter.get('/admin', protect, getAdminProperties)
-propertyRouter.get('/toggle-availability', protect, togglePropertyAvailability)
+propertyRouter.post('/toggle-availability', protect, togglePropertyAvailability)
 
 
 export default propertyRouter;
