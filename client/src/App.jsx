@@ -1,7 +1,7 @@
 import Navbar from './components/Navbar.jsx'
 import { Route, Routes, useLocation, Navigate } from 'react-router-dom'
 import Home from './pages/Home.jsx'
-import AllRooms from './pages/AllRooms.jsx';
+import Services from './pages/Services.jsx';
 import RoomDetails from './pages/RoomDetails.jsx';
 import Footer from './components/Footer.jsx';
 import MyBookings from './pages/MyBookings.jsx';
@@ -15,6 +15,7 @@ import AddRoom from './pages/admin/AddRoom.jsx';
 import Dashboard from './pages/admin/Dashboard.jsx';
 import { Toaster } from 'react-hot-toast';
 import { useAppContext } from './context/AppContext.jsx';
+import Loader from './components/Loader.jsx';
 
 const App = () => {
 
@@ -38,12 +39,14 @@ const App = () => {
       <div className='min-h-[70vh]'>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/rooms' element={<AllRooms />} />
+          <Route path='/services' element={<Services />} />
           <Route path='/rates' element={<Rates />} />
           <Route path='/about' element={<About />} />
           <Route path='/rooms/:id' element={<RoomDetails />} />
           <Route path='/my-bookings' element={<MyBookings />} />
           <Route path='/*' element={<NotFound />} />
+           <Route path='/loader/:nextUrl' element={<Loader />} />
+
           <Route path='/admin' element={<Layout />}>
             <Route index element={<Dashboard />} />
 
