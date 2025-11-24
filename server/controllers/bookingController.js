@@ -16,6 +16,15 @@ const checkAvailability = async ({ room, checkInDate, checkOutDate }) => {
     }
 };
 
+const generateReferenceId = (length = 6) => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+};
+
 // API to check room availability (POST /api/bookings/check-availability)
 export const checkAvailabilityAPI = async (req, res) => {
     try {
@@ -70,6 +79,17 @@ export const createBooking = async (req, res) => {
 
         const totalPrice = roomData.pricePerHour * duration;
 
+        let referenceId;
+        let isUnique = false;
+        // Loop to ensure the generated ID is unique in the database
+        while (!isUnique) {
+            referenceId = generateReferenceId(6);
+            const existingBooking = await Booking.findOne({ referenceId });
+            if (!existingBooking) {
+                isUnique = true;
+            }
+        }
+
         await Booking.create({
             user,
             property,
@@ -78,6 +98,7 @@ export const createBooking = async (req, res) => {
             checkInDate: checkIn,
             checkOutDate: checkOut,
             totalPrice,
+            referenceId,
         });
 
         res.json({ success: true, message: 'Booking created successfully' });
@@ -161,98 +182,29 @@ export const getUserBookings = async (req, res) => {
 // API to get room bookings for admin/owner (GET /api/bookings/room)
 export const getRoomBookings = async (req, res) => {
     try {
-        console.log("=== getRoomBookings START ===");
-        console.log("req.user:", req.user);
-        console.log("req.auth:", req.auth);
+        console.log("=== getRoomBookings (GLOBAL VIEW) START ===");
         
-        // Try multiple ways to get userId
-        let userId = null;
-        
-        if (req.user && req.user._id) {
-            userId = req.user._id;
-            console.log("✅ Got userId from req.user._id:", userId);
-        } else if (req.user && req.user.id) {
-            userId = req.user.id;
-            console.log("✅ Got userId from req.user.id:", userId);
-        } else if (req.userId) {
-            userId = req.userId;
-            console.log("✅ Got userId from req.userId:", userId);
-        } else if (typeof req.auth === 'function') {
-            const authData = req.auth();
-            userId = authData.userId || authData.user_id;
-            console.log("✅ Got userId from req.auth():", userId);
-        }
-        
-        if (!userId) {
-            console.log("❌ No userId found");
-            return res.json({ 
-                success: false, 
-                message: 'Authentication required' 
-            });
-        }
+        // 1. REMOVED: The logic that filters rooms by owner/userId. 
+        // We want to see ALL bookings regardless of who owns the room.
 
-        console.log("Searching for rooms with owner:", userId);
-
-        // Try finding rooms with different field names
-        let rooms = await Room.find({ owner: userId }).select('_id');
-        console.log(`Found ${rooms.length} rooms with 'owner' field`);
-        
-        if (rooms.length === 0) {
-            // Try 'admin' field
-            rooms = await Room.find({ admin: userId }).select('_id');
-            console.log(`Found ${rooms.length} rooms with 'admin' field`);
-        }
-        
-        if (rooms.length === 0) {
-            // Try 'user' field
-            rooms = await Room.find({ user: userId }).select('_id');
-            console.log(`Found ${rooms.length} rooms with 'user' field`);
-        }
-
-        if (rooms.length === 0) {
-            console.log("⚠️ No rooms found for this user");
-            return res.json({ 
-                success: true, 
-                dashboardData: { 
-                    totalBookings: 0, 
-                    totalRevenue: 0, 
-                    bookings: [] 
-                }
-            });
-        }
-
-        const roomIds = rooms.map(r => r._id);
-        console.log("Room IDs:", roomIds);
-
-        // Check bookings count first
-        const bookingCount = await Booking.countDocuments({ room: { $in: roomIds } });
-        console.log(`📊 Total bookings for these rooms: ${bookingCount}`);
-
-        // Fetch basic bookings first
-        const basicBookings = await Booking.find({ room: { $in: roomIds } })
-            .sort({ createdAt: -1 })
-            .lean();
-
-        console.log(`📦 Basic bookings fetched: ${basicBookings.length}`);
-
-        // Try with population
+        // 2. Fetch ALL bookings directly
         let bookings = [];
         try {
-            bookings = await Booking.find({ room: { $in: roomIds } })
+            // Changed query to find({}) to get EVERYTHING
+            bookings = await Booking.find({}) 
                 .populate("property", "name address")
                 .populate("room", "name roomNumber")
-                .populate("user", "name email phone")
-                .sort({ createdAt: -1 })
+                .populate("user", "name email phone") // <--- Crucial: This gets the "User Name" for the table
+                .sort({ createdAt: -1 }) // Newest bookings first
                 .lean();
             
-            console.log(`✅ Populated bookings: ${bookings.length}`);
+            console.log(`✅ Fetched Total Global Bookings: ${bookings.length}`);
         } catch (populateError) {
-            console.error("❌ Population error:", populateError);
-            bookings = basicBookings;
-            console.log("⚠️ Returning unpopulated bookings");
+            console.error("❌ Database error:", populateError);
+            bookings = [];
         }
 
-        // Calculate stats
+        // 3. Calculate stats based on all bookings
         const totalBookings = bookings.length;
         const totalRevenue = bookings.reduce((acc, booking) => 
             acc + (booking.totalPrice || 0), 0
@@ -272,8 +224,6 @@ export const getRoomBookings = async (req, res) => {
 
     } catch (error) {
         console.error("❌ FATAL ERROR in getRoomBookings:", error);
-        console.error("Error stack:", error.stack);
-        
         return res.json({ 
             success: false, 
             message: "Failed to fetch bookings",

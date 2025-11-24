@@ -1,5 +1,5 @@
 import React, { use, useMemo, useState } from 'react'
-import { roomsDummyData, assets, facilityIcons, propertyDummyData, propertyDummyData2, propertyDummyData1 } from '../assets/assets'
+import { roomsDummyData, assets, facilityIcons } from '../assets/assets'
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Ratings from '../components/Ratings.jsx';
 import { useAppContext } from '../context/AppContext.jsx';
@@ -151,9 +151,6 @@ const AllRooms = () => {
                             <div className='flex items-center'>
                                 <Ratings />
                                 <p className='ml-2'>200+ reviews</p>
-                            </div>
-                            <div className='flex items-center gap-1 text-gray-500 mt-2 text-sm'>
-                                <img src={assets.locationIcon} alt="locationIcon" />
                             </div>
                             <div className='flex flex-wrap items-center mt-3 mb-6 gap-4'>
                                 {room.amenities.map((item, index) => (

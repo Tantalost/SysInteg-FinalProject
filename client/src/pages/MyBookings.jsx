@@ -49,7 +49,6 @@ const MyBookings = () => {
                         </div>
 
                         <div className='flex-1'>
-                            {/* FIX: Handle null property */}
                             <h2 className='text-xl font-semibold'>
                                 {booking.property?.name || 'Property No Longer Exists'}
                             </h2>
