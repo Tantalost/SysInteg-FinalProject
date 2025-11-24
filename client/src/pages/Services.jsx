@@ -122,7 +122,7 @@ const Services = () => {
         <div className='flex flex-col-reverse lg:flex-row items-start gap-10 pt-28 md:pt-35 px-4 md:px-16 lg:px-24 xl:px-32'>
             <div>
                 <div className='flex flex-col items-start text-left'>
-                    <h1 className='font-playfair text-4xl md:text-[40px]'>Our Services</h1>
+                    <h1 className='font-playfair text-4xl md:text-[40px]'>Our Rooms</h1>
                     <p className='text-sm md:text-base text-gray-500/90 mt-2 max-w-174'>
                         Explore our immersive themed rooms and curated amenities designed to elevate every stay.
                     </p>
