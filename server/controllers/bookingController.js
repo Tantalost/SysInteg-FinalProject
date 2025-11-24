@@ -306,51 +306,52 @@ export const getBookingsByRoom = async (req, res) => {
 
 export const stripePayment = async (req, res) => {
     try {
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
         const { bookingId } = req.body;
 
-        const booking = await Booking.findById(bookingId);
-        // Ensure we actually found the booking
-        if (!booking) return res.json({ success: false, message: "Booking not found" });
-
-        // Populate 'property' (singular) based on standard naming conventions
-        const roomData = await Room.findById(booking.room).populate('property');
-        
-        if (!roomData || !roomData.property) {
-             return res.json({ success: false, message: "Room or Property data missing" });
+        if (!bookingId) {
+            return res.json({ success: false, message: "Missing bookingId" });
         }
 
-        const totalPrice = booking.totalPrice;
-        const { origin } = req.headers;
+        const booking = await Booking.findById(bookingId)
+            .populate("property", "name")
+            .lean();
 
-        const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
+        if (!booking) {
+            return res.json({ success: false, message: "Booking not found" });
+        }
 
-        const line_items = [
-            {
-                price_data: {
-                    currency: "php", // Ensure this currency is supported by your Stripe account
-                    product_data: {
-                        // FIX: Access .property (singular) not .properties
-                        name: roomData.property.name || "Room Booking", 
-                    },
-                    unit_amount: Math.round(totalPrice * 100) // Stripe expects integers (cents)
-                },
-                quantity: 1,
-            }
-        ]
-
-        const session = await stripeInstance.checkout.sessions.create({
-            line_items,
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
             mode: "payment",
-            success_url: `${origin}/my-bookings?success=true&bookingId=${bookingId}`, // specific return URL
-            cancel_url: `${origin}/my-bookings?canceled=true`,
-            metadata: {
-                bookingId,
-            }
-        })
-        res.json({ success: true, url: session.url })
+            line_items: [
+                {
+                    price_data: {
+                        currency: process.env.CURRENCY || "usd",
+                        product_data: {
+                            name: `Booking at ${booking.property?.name || "Room"}`,
+                        },
+                        unit_amount: booking.totalPrice * 100,
+                    },
+                    quantity: 1,
+                },
+            ],
+            success_url: `${process.env.CLIENT_URL}/payment-success?booking=${bookingId}`,
+            cancel_url: `${process.env.CLIENT_URL}/my-bookings`,
+        });
+
+        return res.json({
+            success: true,
+            url: session.url,
+        });
 
     } catch (error) {
-        console.error("Stripe Error:", error); // Log the actual error for debugging
-        res.json({ success: false, message: "Payment Failed" })
+        console.error("Stripe Payment Error:", error);
+        return res.json({
+            success: false,
+            message: "Stripe payment failed",
+            error: error.message,
+        });
     }
-}
+};
