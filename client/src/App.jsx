@@ -1,7 +1,7 @@
 import Navbar from './components/Navbar.jsx'
 import { Route, Routes, useLocation, Navigate } from 'react-router-dom'
 import Home from './pages/Home.jsx'
-import AllRooms from './pages/AllRooms.jsx';
+import Services from './pages/Services.jsx';
 import RoomDetails from './pages/RoomDetails.jsx';
 import Footer from './components/Footer.jsx';
 import MyBookings from './pages/MyBookings.jsx';
@@ -38,7 +38,7 @@ const App = () => {
       <div className='min-h-[70vh]'>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/rooms' element={<AllRooms />} />
+          <Route path='/services' element={<Services />} />
           <Route path='/rates' element={<Rates />} />
           <Route path='/about' element={<About />} />
           <Route path='/rooms/:id' element={<RoomDetails />} />
