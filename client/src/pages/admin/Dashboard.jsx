@@ -12,7 +12,7 @@ const Dashboard = () => {
         totalBookings: 0,
         totalRevenue: 0,
         // Assuming we can fetch or calculate total users
-        totalUsers: 123, 
+        totalUsers: 7, 
     });
     const [isLoading, setIsLoading] = useState(true);
 
