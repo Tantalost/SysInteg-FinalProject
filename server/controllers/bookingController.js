@@ -302,3 +302,15 @@ export const getBookingsByRoom = async (req, res) => {
         });
     }
 };
+
+
+export const stripePayment = async (req, res)=>{
+    try {
+        const {bookingId} = req.body;
+
+        const booking = await Booking.findById(bookingId);
+        const roomData = await Room.findById(booking.room).populate(' ')
+    } catch (error) {
+        
+    }
+}
