@@ -304,13 +304,21 @@ export const getBookingsByRoom = async (req, res) => {
     }
 };
 
-
 export const stripePayment = async (req, res) => {
     try {
         const { bookingId } = req.body;
 
         const booking = await Booking.findById(bookingId);
+        // Ensure we actually found the booking
+        if (!booking) return res.json({ success: false, message: "Booking not found" });
+
+        // Populate 'property' (singular) based on standard naming conventions
         const roomData = await Room.findById(booking.room).populate('property');
+        
+        if (!roomData || !roomData.property) {
+             return res.json({ success: false, message: "Room or Property data missing" });
+        }
+
         const totalPrice = booking.totalPrice;
         const { origin } = req.headers;
 
@@ -319,21 +327,22 @@ export const stripePayment = async (req, res) => {
         const line_items = [
             {
                 price_data: {
-                    currency: "php",
+                    currency: "php", // Ensure this currency is supported by your Stripe account
                     product_data: {
-                        name: roomData.properties.name,
+                        // FIX: Access .property (singular) not .properties
+                        name: roomData.property.name || "Room Booking", 
                     },
-                    unit_amount: totalPrice * 100
+                    unit_amount: Math.round(totalPrice * 100) // Stripe expects integers (cents)
                 },
                 quantity: 1,
             }
         ]
-        // Create Checkout Session
+
         const session = await stripeInstance.checkout.sessions.create({
             line_items,
             mode: "payment",
-            success_url: `${origin}/loader/my-bookings`,
-            cancel_url: `${origin}/my-bookings`,
+            success_url: `${origin}/my-bookings?success=true&bookingId=${bookingId}`, // specific return URL
+            cancel_url: `${origin}/my-bookings?canceled=true`,
             metadata: {
                 bookingId,
             }
@@ -341,6 +350,7 @@ export const stripePayment = async (req, res) => {
         res.json({ success: true, url: session.url })
 
     } catch (error) {
+        console.error("Stripe Error:", error); // Log the actual error for debugging
         res.json({ success: false, message: "Payment Failed" })
     }
 }
