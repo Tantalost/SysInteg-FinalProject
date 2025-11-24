@@ -4,7 +4,6 @@ import { assets, facilityIcons, roomCommonData } from '../assets/assets'
 import Ratings from '../components/Ratings'
 import { useAppContext } from '../context/AppContext.jsx'
 
-// 1. Import Axios and Toast (Using react-hot-toast to match your AppContext)
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
 
@@ -12,7 +11,6 @@ const RoomDetails = () => {
     const { id } = useParams()
     const navigate = useNavigate()
 
-    // 2. Destructure properties, currency, and getToken from your Context
     const { properties, currency, getToken, user } = useAppContext();
 
     const [selectedProperty, setSelectedProperty] = useState(null)
@@ -27,22 +25,19 @@ const RoomDetails = () => {
     const onSubmitHandler = async (e) => {
         e.preventDefault();
 
-        // 3. Check if user is logged in using Context user object
         if (!user) {
             toast.error("You must be logged in to book.");
             return;
         }
 
         try {
-            // 4. Get the fresh token from Clerk
             const token = await getToken();
 
-            // 5. Make request (Base URL is already set in AppContext, so just use relative path)
             console.log("SENDING BOOKING DATA:", {
                 property: id,
                 room: id,
-                date: checkInDate,   // Should be "YYYY-MM-DD"
-                startTime,     // Should be "HH:MM" (24h format)
+                date: checkInDate,   
+                startTime,     
                 duration: Number(duration),
                 guests: Number(guests)
             });
@@ -61,7 +56,11 @@ const RoomDetails = () => {
             );
 
             if (data.success) {
-                toast.success(data.message);
+                if (data.bookingReference) {
+                    toast.success(`Booking successful! Your Reference ID is: ${data.bookingReference}`);
+                } else {
+                    toast.success(data.message);
+                }
                 navigate('/my-bookings');
                 window.scrollTo(0, 0);
             } else {
@@ -95,9 +94,6 @@ const RoomDetails = () => {
             <div className='flex flex-col md:flex-row items-start md:items-center gap-2'>
                 <h1 className='text-3xl md:text-4xl font-playfair'>
                     {selectedProperty.roomType}
-                    <span className='font-inter text-lg text-gray-600 ml-3'>
-                        by {selectedProperty.room?.name || "Host"}
-                    </span>
                 </h1>
                 <p className='text-xs font-inter py-1.5 px-3 text-white bg-orange-500 rounded-full'>20% OFF</p>
             </div>
@@ -105,11 +101,6 @@ const RoomDetails = () => {
             <div className='flex items-center gap-1 mt-2'>
                 <Ratings />
                 <p className='ml-2'>200+ reviews</p>
-            </div>
-
-            <div className='flex items-center gap-1 text-gray-500 mt-2'>
-                <img src={assets.locationIcon} alt="locationIcon" />
-                <span>{selectedProperty.room?.address || "Location unavailable"}</span>
             </div>
 
             <div className='flex flex-col lg:flex-row mt-6 gap-6'>

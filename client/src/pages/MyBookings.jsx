@@ -77,43 +77,35 @@ const MyBookings = () => {
                                     />
                                 </div>
 
-                                {/* DETAILS */}
-                                <div className="flex-1 space-y-1">
-                                    <h2 className="text-xl font-semibold text-gray-800">
-                                        {property.name || "Property No Longer Exists"}
-                                    </h2>
-
-                                    <p className="text-gray-600">
-                                        Room: {room.name || room.roomNumber || "Room Info Unavailable"}
-                                    </p>
-
-                                    <p className="text-sm text-gray-500">
-                                        {new Date(booking.checkInDate).toDateString()} —{" "}
-                                        {new Date(booking.checkOutDate).toDateString()}
-                                    </p>
-
-                                    <p className="font-bold text-gray-900 mt-2">
-                                        Total: {currency} {booking.totalPrice}
-                                    </p>
-                                </div>
-
-                                {/* STATUS BADGE */}
-                                <div className="flex items-center md:justify-end mt-3 md:mt-0">
-                                    <span
-                                        className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                            booking.isPaid
-                                                ? "bg-green-100 text-green-700"
-                                                : "bg-yellow-100 text-yellow-700"
-                                        }`}
-                                    >
-                                        {booking.isPaid ? "Paid" : "Pay at Location"}
-                                    </span>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            </main>
+                        <div className='flex-1'>
+                            {/* FIX: Handle null property */}
+                            <h2 className='text-xl font-semibold'>
+                                {booking.property?.name || 'Property No Longer Exists'}
+                            </h2>
+                            
+                            {/* FIX: Handle null room and incorrect field name */}
+                            <p className='text-gray-600'>
+                                Room: {booking.room?.name || booking.room?.roomNumber || 'Room Info Unavailable'}
+                            </p>
+                            
+                            <p className='text-sm text-gray-500'>
+                                {new Date(booking.checkInDate).toDateString()} - {new Date(booking.checkOutDate).toDateString()}
+                            </p>
+                            <p className='font-bold mt-2'>
+                                Total: {currency} {booking.totalPrice}
+                            </p>
+                        </div>
+                        
+                        <div className='flex items-center'>
+                             <span className={`px-3 py-1 rounded-full text-sm ${
+                                booking.isPaid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                             }`}>
+                                {booking.isPaid ? 'Paid' : 'Pay at Location'}
+                             </span>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };

@@ -10,6 +10,7 @@ const AddRoom = () => {
 
   const [images, setImages] = useState({ 1: null, 2: null, 3: null, 4: null })
   const [inputs, setInputs] = useState({
+    name: '',
     roomType: '',
     pricePerHour: '',
     amenities: {
@@ -35,6 +36,7 @@ const AddRoom = () => {
     setLoading(true)
     try {
       const formData = new FormData()
+      formData.append('name', inputs.name)
       formData.append('roomType', inputs.roomType)
       formData.append('pricePerHour', inputs.pricePerHour)
       const amenities = Object.keys(inputs.amenities).filter(a => inputs.amenities[a])
@@ -48,6 +50,7 @@ const AddRoom = () => {
       if (data.success) {
         toast.success('Room added successfully')
         setInputs({
+          name: '',
           roomType: '',
           pricePerHour: '',
           amenities: Object.fromEntries(Object.keys(inputs.amenities).map(a => [a, false]))
@@ -106,39 +109,24 @@ const AddRoom = () => {
         </div>
       </div>
 
-    {/* Room Type & Price */}
-<div className="flex flex-col sm:flex-row sm:gap-6">
-  {/* Room Type */}
-  <div className="flex-1">
-    <label className="text-gray-700 font-semibold mb-1 block">Room Type</label>
-    <select
-      value={inputs.roomType}
-      onChange={e => setInputs({ ...inputs, roomType: e.target.value })}
-      className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50"
-    >
-      <option value="">Select Room Type</option>
-      <option value="Gaming Room">Gaming Room</option>
-      <option value="KTV Room">KTV Room</option>
-      <option value="Movie Room">Movie Room</option>
-    </select>
-  </div>
-
-  {/* Price */}
-<div className="mt-4 sm:mt-0 flex flex-col">
-  <label className="text-gray-700 font-semibold mb-1 block">Price</label>
-  <div className="relative w-40">
-    <input
-      type="number"
-      value={inputs.pricePerHour}
-      onChange={e => setInputs({ ...inputs, pricePerHour: e.target.value })}
-      placeholder="Price"
-      className="w-full p-3 pr-16 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50"
-    />
-    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 font-medium pointer-events-none">
-      / hour
-    </span>
-  </div>
-</div>
+      <div className='w-full flex max-sm:flex-col sm:gap-4 mt-4'>
+        <div className='flex-1 max-2-48'>
+          <p className='text-gray-800 mt-4'>Room Type</p>
+          <select value={inputs.roomType} onChange={e => setInputs({ ...inputs, roomType: e.target.value })}
+            className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'>
+            <option value="">Select Room Type</option>
+            <option value="Gaming Room">Gaming Room</option>
+            <option value="KTV Room">KTV Room</option>
+            <option value="Movie Room">Movie Room</option>
+          </select>
+        </div>
+        <div>
+          <p className='mt-4 text-gray-800'>
+            Price <span className='text-xs'>/hour</span>
+          </p>
+          <input type="number" className='border border-gray-300 mt-1 rounded p-2 w-24' value={inputs.pricePerHour} onChange={e => setInputs({ ...inputs, pricePerHour: Number(e.target.value) })} />
+        </div>
+      </div>
 
 </div>
 
