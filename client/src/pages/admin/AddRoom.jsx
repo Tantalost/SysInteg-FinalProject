@@ -21,9 +21,14 @@ const AddRoom = () => {
     pricePerHour: 0,
     amenities: {
       'Free Wifi': false,
-      'Free Breakfast': false,
+      'Air Conditioning': false,
       'Room Service': false,
-      'Mountain View': false,
+      'Charging Station (USB-C / Fast Charge)': false,
+      'Private Bathroom Access': false,
+      'CCTV Security / Smart Lock': false,
+      'Mini Bar': false,
+      'Customizable Lighting': false,
+      '24/7 Support Staff': false,
     }
   })
 
@@ -32,14 +37,13 @@ const AddRoom = () => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     //Checks if all inputs are entered
-    if (!inputs.roomType || !inputs.pricePerHour || !inputs.amenities || !Object.values(images).some(image => image)) {
+    if (!inputs.roomType || !inputs.pricePerHour || !Object.values(images).some(image => image)) {
       toast.error('Please fill in all fields and upload at least one image.')
       return;
     }
     setLoading(true);
     try {
       const formData = new FormData()
-      formData.append("name", inputs.name);
       formData.append('roomType', inputs.roomType)
       formData.append('pricePerHour', inputs.pricePerHour)
       // Converts amenities object to array of selected amenities
@@ -61,9 +65,14 @@ const AddRoom = () => {
           pricePerHour: 0,
           amenities: {
             'Free Wifi': false,
-            'Free Breakfast': false,
+            'Air Conditioning': false,
             'Room Service': false,
-            'Mountain View': false,
+            'Charging Station (USB-C / Fast Charge)': false,
+            'Private Bathroom Access': false,
+            'CCTV Security / Smart Lock': false,
+            'Mini Bar': false,
+            'Customizable Lighting': false,
+            '24/7 Support Staff': false,
           }
         })
         setImages({
@@ -97,13 +106,6 @@ const AddRoom = () => {
 
       <div className='w-full flex max-sm:flex-col sm:gap-4 mt-4'>
         <div className='flex-1 max-2-48'>
-          <p className="text-gray-800 mt-4">Property Name</p>
-          <input
-            type="text"
-            className="border border-gray-300 mt-1 rounded p-2 w-full"
-            value={inputs.name}
-            onChange={e => setInputs({ ...inputs, name: e.target.value })}
-          />
           <p className='text-gray-800 mt-4'>Room Type</p>
           <select value={inputs.roomType} onChange={e => setInputs({ ...inputs, roomType: e.target.value })}
             className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'>
@@ -117,7 +119,7 @@ const AddRoom = () => {
           <p className='mt-4 text-gray-800'>
             Price <span className='text-xs'>/hour</span>
           </p>
-          <input type="number" className='border border-gray-300 mt-1 rounded p-2 w-24' value={inputs.pricePerHour} onChange={e => setInputs({ ...inputs, pricePerHour: e.target.value })} />
+          <input type="number" className='border border-gray-300 mt-1 rounded p-2 w-24' value={inputs.pricePerHour} onChange={e => setInputs({ ...inputs, pricePerHour: Number(e.target.value) })} />
         </div>
       </div>
 
