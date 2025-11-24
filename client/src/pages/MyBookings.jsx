@@ -1,17 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { useAppContext } from '../context/AppContext'
-import axios from 'axios' // Or use from context if available
+import React, { useEffect, useState } from "react";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const MyBookings = () => {
-    // Assuming context provides these
-    const { user, getToken, toast, currency } = useAppContext();
+    const { user, axios, getToken, currency } = useAppContext();
     const [bookings, setBookings] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const getUserBookings = async () => {
         try {
             const token = await getToken();
-            const { data } = await axios.get('/api/bookings/user', {
-                headers: { Authorization: `Bearer ${token}` }
+            const { data } = await axios.get("/api/bookings/user", {
+                headers: { Authorization: `Bearer ${token}` },
             });
 
             if (data.success) {
@@ -20,35 +20,65 @@ const MyBookings = () => {
                 toast.error(data.message);
             }
         } catch (error) {
-            console.error(error);
             toast.error(error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        if (user) {
-            getUserBookings();
-        }
+        if (user) getUserBookings();
     }, [user]);
 
-    if (!bookings) return <div>Loading...</div>;
+    const fallbackImage =
+        "https://via.placeholder.com/400x300?text=No+Image+Available";
 
     return (
-        <div className='container mx-auto px-4 py-8'>
-            <h1 className='text-2xl font-bold mb-6'>My Bookings</h1>
-            <div className='grid gap-4'>
-                {bookings.map((booking, index) => (
-                    <div key={index} className='border p-4 rounded shadow-sm flex flex-col md:flex-row gap-4'>
-                        {/* IMAGE HANDLING: Check if property exists first */}
-                        <div className='w-full md:w-48 h-32 bg-gray-200 rounded overflow-hidden'>
-                             <img 
-                                src={booking.property?.images?.[0] || 'placeholder.jpg'} 
-                                alt={booking.property?.name || 'Property'}
-                                className='w-full h-full object-cover' 
-                             />
-                        </div>
+        <div className="min-h-screen flex flex-col">
+            {/* MAIN PAGE CONTENT */}
+            <main className="flex-1 container mx-auto px-4 py-20 max-w-5xl">
+                <h1 className="text-3xl font-bold text-gray-800 mb-8">
+                    My Bookings
+                </h1>
+
+                {/* LOADING STATE */}
+                {isLoading && (
+                    <div className="space-y-4 animate-pulse">
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
+                        ))}
+                    </div>
+                )}
+
+                {/* EMPTY STATE */}
+                {!isLoading && bookings.length === 0 && (
+                    <div className="text-center py-20 text-gray-500">
+                        <p className="text-lg">No bookings yet.</p>
+                    </div>
+                )}
+
+                {/* BOOKINGS LIST */}
+                <div className="grid gap-6">
+                    {bookings.map((booking, index) => {
+                        const property = booking.property || {};
+                        const room = booking.room || {};
+
+                        return (
+                            <div
+                                key={index}
+                                className="flex flex-col md:flex-row items-start gap-5 p-5 rounded-xl border bg-white shadow-md hover:shadow-lg transition-all"
+                            >
+                                {/* IMAGE */}
+                                <div className="w-full md:w-48 h-36 rounded-lg overflow-hidden bg-gray-200">
+                                    <img
+                                        src={property.images?.[0] || fallbackImage}
+                                        alt={property.name || "Property"}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
 
                         <div className='flex-1'>
+                            {/* FIX: Handle null property */}
                             <h2 className='text-xl font-semibold'>
                                 {booking.property?.name || 'Property No Longer Exists'}
                             </h2>
@@ -77,7 +107,7 @@ const MyBookings = () => {
                 ))}
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default MyBookings
+export default MyBookings;

@@ -3,12 +3,14 @@ import { assets } from '../assets/assets.js';
 
 const Footer = () => {
     return (
-        <footer class="flex flex-col items-center w-full 
-                       mt-[-3rem] pt-[4.5rem] pb-10 
-                       bg-gradient-to-b from-transparent to-[#D10000] text-white/70">
-            <img src={assets.logo} alt="logo" className={`w-auto h-40`} />
-            <p class="mt-4 text-center">Copyright © 2025 <a href="/">Cynergy</a>. All rights reservered.</p>
-        </footer>
+        <footer className="w-full py-6 bg-gradient-to-b from-transparent to-[#D10000] text-white/70 flex flex-col items-center">
+    <img src={assets.logo} alt="logo" className="h-16 w-auto opacity-90" />
+
+    <p className="mt-2 text-center text-sm">
+        © 2025 <a href="/" className="underline">Cynergy</a>. All rights reserved.
+    </p>
+</footer>
+
     )
 }
 
