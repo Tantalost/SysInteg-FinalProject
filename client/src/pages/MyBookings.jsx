@@ -26,6 +26,24 @@ const MyBookings = () => {
         }
     };
 
+    const handlePayment = async (bookingId) => {
+        try {
+            const { data } = await axios.post(
+                "/api/bookings/stripe-payment",
+                { bookingId },
+                { headers: { Authorization: `Bearer ${await getToken()}` } }
+            );
+
+            if (data.success) {
+                window.location.href = data.url;
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
+
     useEffect(() => {
         if (user) getUserBookings();
     }, [user]);
@@ -83,7 +101,7 @@ const MyBookings = () => {
                                     </h2>
 
                                     <p className="text-gray-600">
-                                        Room: {booking.room?.name || booking.room?.roomNumber || "Room Info Unavailable"}
+                                        Room: {room.name || room.roomNumber || "Room Info Unavailable"}
                                     </p>
 
                                     <p className="text-sm text-gray-500">
@@ -98,15 +116,24 @@ const MyBookings = () => {
 
                                 <div className="flex items-center">
                                     <span
-                                        className={`px-3 py-1 rounded-full text-sm ${
-                                            booking.isPaid
+                                        className={`px-3 py-1 rounded-full text-sm ${booking.isPaid
                                                 ? "bg-green-100 text-green-800"
                                                 : "bg-yellow-100 text-yellow-800"
-                                        }`}
+                                            }`}
                                     >
                                         {booking.isPaid ? "Paid" : "Pay at Location"}
                                     </span>
                                 </div>
+
+                                {/* FIXED: BUTTON MOVED *INSIDE* THE MAIN WRAPPER */}
+                                {!booking.isPaid && (
+                                    <button
+                                        onClick={() => handlePayment(booking._id)}
+                                        className="px-4 py-1.5 mt-4 text-xs border border-gray-400 rounded-full hover:bg-gray-50 transition-all cursor-pointer"
+                                    >
+                                        Pay Now
+                                    </button>
+                                )}
                             </div>
                         );
                     })}

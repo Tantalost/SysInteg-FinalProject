@@ -2,6 +2,7 @@ import transporter from "../configs/nodemailer.js";
 import Booking from "../models/Booking.js";
 import Property from "../models/Property.js";
 import Room from "../models/Room.js";
+import Stripe from "stripe";
 
 // Function to check Room Availability
 const checkAvailability = async ({ room, checkInDate, checkOutDate }) => {
@@ -58,7 +59,7 @@ export const checkAvailabilityAPI = async (req, res) => {
 export const createBooking = async (req, res) => {
     try {
         const { property, room, date, startTime, duration, guests } = req.body;
-        
+
         // 1. Check if user exists (Security Check)
         if (!req.user || !req.user._id) {
             return res.json({ success: false, message: "User authentication failed" });
@@ -112,7 +113,7 @@ export const createBooking = async (req, res) => {
         // OPTIONAL FIX: Use local variables (date, startTime) for the email
         // because the 'booking' object usually stores full Date objects, not strings.
         const mailOptions = {
-            from: process.env.SENDER_EMAIL, 
+            from: process.env.SENDER_EMAIL,
             to: req.user.email,
             subject: 'Room Booking Details',
             html: `
@@ -157,9 +158,9 @@ export const getUserBookings = async (req, res) => {
         // Check if user is authenticated
         if (!req.user || !req.user._id) {
             console.log("❌ No user authentication data");
-            return res.json({ 
-                success: false, 
-                message: "User authentication required" 
+            return res.json({
+                success: false,
+                message: "User authentication required"
             });
         }
 
@@ -188,7 +189,7 @@ export const getUserBookings = async (req, res) => {
                 .populate("room", "name roomNumber capacity")
                 .sort({ createdAt: -1 })
                 .lean();
-            
+
             console.log(`✅ Populated bookings: ${bookings.length}`);
         } catch (populateError) {
             console.error("❌ Population error:", populateError);
@@ -199,20 +200,20 @@ export const getUserBookings = async (req, res) => {
 
         console.log("=== getUserBookings END ===");
 
-        return res.json({ 
-            success: true, 
+        return res.json({
+            success: true,
             bookings,
-            count: bookings.length 
+            count: bookings.length
         });
 
     } catch (error) {
         console.error("❌ FATAL ERROR in getUserBookings:", error);
         console.error("Error stack:", error.stack);
-        
-        return res.json({ 
-            success: false, 
+
+        return res.json({
+            success: false,
             message: "Failed to fetch bookings",
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -221,7 +222,7 @@ export const getUserBookings = async (req, res) => {
 export const getRoomBookings = async (req, res) => {
     try {
         console.log("=== getRoomBookings (GLOBAL VIEW) START ===");
-        
+
         // 1. REMOVED: The logic that filters rooms by owner/userId. 
         // We want to see ALL bookings regardless of who owns the room.
 
@@ -229,13 +230,13 @@ export const getRoomBookings = async (req, res) => {
         let bookings = [];
         try {
             // Changed query to find({}) to get EVERYTHING
-            bookings = await Booking.find({}) 
+            bookings = await Booking.find({})
                 .populate("property", "name address")
                 .populate("room", "name roomNumber")
                 .populate("user", "name email phone") // <--- Crucial: This gets the "User Name" for the table
                 .sort({ createdAt: -1 }) // Newest bookings first
                 .lean();
-            
+
             console.log(`✅ Fetched Total Global Bookings: ${bookings.length}`);
         } catch (populateError) {
             console.error("❌ Database error:", populateError);
@@ -244,28 +245,28 @@ export const getRoomBookings = async (req, res) => {
 
         // 3. Calculate stats based on all bookings
         const totalBookings = bookings.length;
-        const totalRevenue = bookings.reduce((acc, booking) => 
+        const totalRevenue = bookings.reduce((acc, booking) =>
             acc + (booking.totalPrice || 0), 0
         );
 
         console.log(`Stats - Bookings: ${totalBookings}, Revenue: ${totalRevenue}`);
         console.log("=== getRoomBookings END ===");
 
-        return res.json({ 
-            success: true, 
-            dashboardData: { 
-                totalBookings, 
-                totalRevenue, 
-                bookings 
+        return res.json({
+            success: true,
+            dashboardData: {
+                totalBookings,
+                totalRevenue,
+                bookings
             }
         });
 
     } catch (error) {
         console.error("❌ FATAL ERROR in getRoomBookings:", error);
-        return res.json({ 
-            success: false, 
+        return res.json({
+            success: false,
             message: "Failed to fetch bookings",
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -276,9 +277,9 @@ export const getBookingsByRoom = async (req, res) => {
         const { roomId } = req.params;
 
         if (!roomId) {
-            return res.json({ 
-                success: false, 
-                message: "Room ID is required" 
+            return res.json({
+                success: false,
+                message: "Room ID is required"
             });
         }
 
@@ -287,33 +288,59 @@ export const getBookingsByRoom = async (req, res) => {
             .sort({ checkInDate: 1 })
             .lean();
 
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             bookings,
-            count: bookings.length 
+            count: bookings.length
         });
 
     } catch (error) {
         console.error("Error fetching bookings by room:", error);
-        res.json({ 
-            success: false, 
+        res.json({
+            success: false,
             message: "Failed to fetch bookings",
-            error: error.message 
+            error: error.message
         });
     }
 };
 
 
-export const stripePayment = async (req, res)=>{
+export const stripePayment = async (req, res) => {
     try {
-        const {bookingId} = req.body;
+        const { bookingId } = req.body;
 
         const booking = await Booking.findById(bookingId);
-        const roomData = await Room.findById(booking.room).populate('properties')
+        const roomData = await Room.findById(booking.room).populate('property');
         const totalPrice = booking.totalPrice;
-        const {origin} = req.headers;
+        const { origin } = req.headers;
+
+        const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+        const line_items = [
+            {
+                price_data: {
+                    currency: "php",
+                    product_data: {
+                        name: roomData.properties.name,
+                    },
+                    unit_amount: totalPrice * 100
+                },
+                quantity: 1,
+            }
+        ]
+        // Create Checkout Session
+        const session = await stripeInstance.checkout.sessions.create({
+            line_items,
+            mode: "payment",
+            success_url: `${origin}/loader/my-bookings`,
+            cancel_url: `${origin}/my-bookings`,
+            metadata: {
+                bookingId,
+            }
+        })
+        res.json({ success: true, url: session.url })
 
     } catch (error) {
-        
+        res.json({ success: false, message: "Payment Failed" })
     }
 }

@@ -15,6 +15,7 @@ import AddRoom from './pages/admin/AddRoom.jsx';
 import Dashboard from './pages/admin/Dashboard.jsx';
 import { Toaster } from 'react-hot-toast';
 import { useAppContext } from './context/AppContext.jsx';
+import Loader from './components/Loader.jsx';
 
 const App = () => {
 
@@ -44,6 +45,8 @@ const App = () => {
           <Route path='/rooms/:id' element={<RoomDetails />} />
           <Route path='/my-bookings' element={<MyBookings />} />
           <Route path='/*' element={<NotFound />} />
+           <Route path='/loader/:nextUrl' element={<Loader />} />
+
           <Route path='/admin' element={<Layout />}>
             <Route index element={<Dashboard />} />
 
