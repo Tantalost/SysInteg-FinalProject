@@ -191,10 +191,6 @@ const RoomDetails = () => {
                     </div>
                 ))}
             </div>
-
-            <div className='max-w-3xl border-y border-gray-300 my-15 py-10 text-gray-500'>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque aspernatur ab reprehenderit laboriosam dignissimos sint vel.</p>
-            </div>
         </div>
     )
 }

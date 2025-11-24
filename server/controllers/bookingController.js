@@ -321,14 +321,16 @@ export const stripePayment = async (req, res) => {
         if (!booking) {
             return res.json({ success: false, message: "Booking not found" });
         }
-
+        
+        console.log("Stripe success URL:", `${process.env.CLIENT_URL}/payment-success?booking=${bookingId}`);
+console.log("Stripe cancel URL:", `${process.env.CLIENT_URL}/my-bookings`);
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",
             line_items: [
                 {
                     price_data: {
-                        currency: process.env.CURRENCY || "usd",
+                        currency: process.env.CURRENCY || "php",
                         product_data: {
                             name: `Booking at ${booking.property?.name || "Room"}`,
                         },
