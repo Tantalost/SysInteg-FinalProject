@@ -9,6 +9,7 @@ import NotFound from './components/NotFound.jsx';
 import Rates from './pages/Rates.jsx'
 import RoomReg from './pages/RoomReg.jsx';
 import Layout from './pages/admin/Layout.jsx';
+import About from './pages/About.jsx'
 import ListRoom from './pages/admin/ListRoom.jsx';
 import AddRoom from './pages/admin/AddRoom.jsx';
 import Dashboard from './pages/admin/Dashboard.jsx';
@@ -39,6 +40,7 @@ const App = () => {
           <Route path='/' element={<Home />} />
           <Route path='/rooms' element={<AllRooms />} />
           <Route path='/rates' element={<Rates />} />
+          <Route path='/about' element={<About />} />
           <Route path='/rooms/:id' element={<RoomDetails />} />
           <Route path='/my-bookings' element={<MyBookings />} />
           <Route path='/*' element={<NotFound />} />

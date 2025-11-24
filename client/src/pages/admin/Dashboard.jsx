@@ -81,7 +81,7 @@ const Dashboard = () => {
                                 <tr key={index}>
                                     <td className='py-3 px-4 text-gray-700 border-t border-gray-300'>
                                         {/* Optional chaining for user */}
-                                        {item.user?.name || 'Guest'}
+                                        {item.user.username || 'Guest'}
                                     </td>
                                     <td className='py-3 px-4 text-gray-700 border-t border-gray-300 max-sm:hidden'>
                                         {/* FIX 3: Optional chaining for room + use 'name' instead of 'roomType' */}

@@ -39,7 +39,6 @@ const ListRoom = () => {
       
       if (data.success) {
         toast.success(data.message);
-        // Refresh the list to show new status
         fetchRooms(); 
       } else {
         toast.error(data.message);
