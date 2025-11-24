@@ -17,6 +17,7 @@ const AddRoom = () => {
   })
 
   const [inputs, setInputs] = useState({
+    name: '',
     roomType: '',
     pricePerHour: 0,
     amenities: {
@@ -37,13 +38,14 @@ const AddRoom = () => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     //Checks if all inputs are entered
-    if (!inputs.roomType || !inputs.pricePerHour || !Object.values(images).some(image => image)) {
+    if (!inputs.name ||!inputs.roomType || !inputs.pricePerHour || !Object.values(images).some(image => image)) {
       toast.error('Please fill in all fields and upload at least one image.')
       return;
     }
     setLoading(true);
     try {
       const formData = new FormData()
+      formData.append('name', inputs.name)
       formData.append('roomType', inputs.roomType)
       formData.append('pricePerHour', inputs.pricePerHour)
       // Converts amenities object to array of selected amenities
@@ -61,6 +63,7 @@ const AddRoom = () => {
       if (data.success) {
         toast.success('Room added successfully')
         setInputs({
+          name: '',
           roomType: '',
           pricePerHour: 0,
           amenities: {
@@ -106,6 +109,10 @@ const AddRoom = () => {
 
       <div className='w-full flex max-sm:flex-col sm:gap-4 mt-4'>
         <div className='flex-1 max-2-48'>
+           <p className='mt-4 text-gray-800'>
+            Room Name
+          </p>
+          <input type="text" className='border border-gray-300 mt-1 rounded p-2 w-24' value={inputs.name} onChange={e => setInputs({ ...inputs, name: String(e.target.value) })} />
           <p className='text-gray-800 mt-4'>Room Type</p>
           <select value={inputs.roomType} onChange={e => setInputs({ ...inputs, roomType: e.target.value })}
             className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'>

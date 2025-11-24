@@ -1,3 +1,4 @@
+import transporter from "../configs/nodemailer.js";
 import Booking from "../models/Booking.js";
 import Property from "../models/Property.js";
 import Room from "../models/Room.js";
@@ -57,6 +58,11 @@ export const checkAvailabilityAPI = async (req, res) => {
 export const createBooking = async (req, res) => {
     try {
         const { property, room, date, startTime, duration, guests } = req.body;
+        
+        // 1. Check if user exists (Security Check)
+        if (!req.user || !req.user._id) {
+            return res.json({ success: false, message: "User authentication failed" });
+        }
         const user = req.user._id;
 
         const checkIn = new Date(`${date}T${startTime}:00`);
@@ -81,7 +87,6 @@ export const createBooking = async (req, res) => {
 
         let referenceId;
         let isUnique = false;
-        // Loop to ensure the generated ID is unique in the database
         while (!isUnique) {
             referenceId = generateReferenceId(6);
             const existingBooking = await Booking.findOne({ referenceId });
@@ -90,7 +95,10 @@ export const createBooking = async (req, res) => {
             }
         }
 
-        await Booking.create({
+        // ======================================================
+        // FIX IS HERE: Added 'const booking ='
+        // ======================================================
+        const booking = await Booking.create({
             user,
             property,
             room,
@@ -100,6 +108,36 @@ export const createBooking = async (req, res) => {
             totalPrice,
             referenceId,
         });
+
+        // OPTIONAL FIX: Use local variables (date, startTime) for the email
+        // because the 'booking' object usually stores full Date objects, not strings.
+        const mailOptions = {
+            from: process.env.SENDER_EMAIL, 
+            to: req.user.email,
+            subject: 'Room Booking Details',
+            html: `
+                <h2>Your Booking Details</h2>
+                <p>Dear ${req.user.username || 'Guest'},</p>
+                <p>Thank you for your booking! Here are your details:</p>
+                <ul>
+                    <li><strong>Booking ID:</strong> ${booking._id}</li>
+                    <li><strong>Room Reference:</strong> ${booking.referenceId}</li>
+                    <li><strong>Date:</strong> ${date}</li> 
+                    <li><strong>Start Time:</strong> ${startTime}</li>
+                    <li><strong>Duration:</strong> ${duration} hours</li>
+                    <li><strong>Booking Amount:</strong> ${process.env.CURRENCY || 'P'} ${totalPrice}</li>
+                </ul>
+                <p>We look forward to seeing you!</p>
+            `
+        }
+
+        // Wrap email in try/catch so it doesn't crash the response if email fails
+        try {
+            await transporter.sendMail(mailOptions);
+        } catch (emailError) {
+            console.error("Email sending failed:", emailError);
+            // We still return success because the booking WAS created in DB
+        }
 
         res.json({ success: true, message: 'Booking created successfully' });
 

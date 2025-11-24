@@ -6,7 +6,7 @@ import Property from "../models/Property.js";
 // API to create a new property for a room
 export const createProperty = async (req, res) => {
     try {
-        const { roomType, pricePerHour, amenities } = req.body;
+        const { name ,roomType, pricePerHour, amenities } = req.body;
 
         // Debug: Check if files arrived
         console.log("Files received:", req.files); 
@@ -33,6 +33,7 @@ export const createProperty = async (req, res) => {
 
         // 3. Create the new Property
         const newProperty = await Property.create({
+            name,
             room: room._id,     
             roomType,
             pricePerHour: +pricePerHour,
