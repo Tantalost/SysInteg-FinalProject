@@ -22,20 +22,17 @@ const Navbar = () => {
 
     const { openSignIn } = useClerk()
     const location = useLocation()
-
     const { user } = useAppContext();
     const navigate = useNavigate();
 
+    const isActive = (path) => location.pathname === path;
 
     useEffect(() => {
-
         if (location.pathname !== '/') {
             setIsScrolled(true);
-            return;
         } else {
             setIsScrolled(false);
         }
-        setIsScrolled(prev => location.pathname !== '/' ? true : prev);
 
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 10);
@@ -48,16 +45,30 @@ const Navbar = () => {
         <nav className={`fixed top-0 left-0 w-full h-[80px] flex items-center justify-between px-4 md:px-16 lg:px-24 xl:px-32 transition-all duration-500 z-50 ${isScrolled ? "bg-white/80 shadow-md text-gray-700 backdrop-blur-lg py-3 md:py-4" : "py-4 md:py-6"}`}>
 
             <Link to='/'>
-                <img src={assets.logo} alt="logo" className={`w-auto transition-all duration-300
-                        ${isScrolled ? "h-40 invert opacity-80" : "h-40"}`} />
+                <img src={assets.logo} alt="logo" className={`w-auto transition-all duration-300 ${isScrolled ? "h-40 invert opacity-80" : "h-40"}`} />
             </Link>
 
             <div className="hidden md:flex items-center gap-4 lg:gap-8">
                 {navLinks.map((link, i) => (
-                    <a key={i} href={link.path} className={`group flex flex-col gap-0.5 ${isScrolled ? "text-gray-700" : "text-white"}`}>
+                    <Link
+                        key={i}
+                        to={link.path}
+                        className={`group flex flex-col gap-0.5 transition-all duration-300 
+                            ${isActive(link.path) 
+                                ? "text-red-600 font-semibold" 
+                                : isScrolled 
+                                    ? "text-gray-700" 
+                                    : "text-white"}`
+                        }
+                    >
                         {link.name}
-                        <div className={`${isScrolled ? "bg-gray-700" : "bg-white"} h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
-                    </a>
+                        <div className={`${isActive(link.path) 
+                                            ? "bg-red-600" 
+                                            : isScrolled 
+                                                ? "bg-gray-700" 
+                                                : "bg-white"} 
+                                        h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
+                    </Link>
                 ))}
                 {user && (
                     <button
@@ -70,32 +81,29 @@ const Navbar = () => {
             </div>
 
             <div className="hidden md:flex items-center gap-4">
-                <img src={assets.searchIcon} alt="search" className={`$
-                        {isScrolled && 'invert'} h-10 transition-all duration-500`} />
-                {user ?
-                    (<UserButton>
+                <img src={assets.searchIcon} alt="search" className={`${isScrolled ? 'invert' : ''} h-10 transition-all duration-500`} />
+                {user ? (
+                    <UserButton>
                         <UserButton.MenuItems>
-                            <UserButton.Action label="My Bookings" labelIcon={<BookIcon />} onClick=
-                                {() => navigate('/my-bookings')} />
+                            <UserButton.Action label="My Bookings" labelIcon={<BookIcon />} onClick={() => navigate('/my-bookings')} />
                         </UserButton.MenuItems>
-                    </UserButton>)
-                    :
-                    (<button onClick={openSignIn} className={`px-8 py-2.5 rounded-full cursor-pointer ml-4 transition-all duration-500 ${isScrolled ? "text-white bg-black" : "bg-white text-black"}`}>
+                    </UserButton>
+                ) : (
+                    <button onClick={openSignIn} className={`px-8 py-2.5 rounded-full cursor-pointer ml-4 transition-all duration-500 ${isScrolled ? "text-white bg-black" : "bg-white text-black"}`}>
                         Login
-                    </button>)
-                }
+                    </button>
+                )}
             </div>
 
             <div className="flex items-center gap-3 md:hidden">
-                {user && <UserButton>
-                    <UserButton.MenuItems>
-                        <UserButton.Action label="My Bookings" labelIcon={<BookIcon />} onClick=
-                            {() => navigate('/my-bookings')} />
-                    </UserButton.MenuItems>
-                </UserButton>}
-
-                <img onClick={() => setIsMenuOpen(!isMenuOpen)} src={assets.menuIcon} alt="menu" className={`$
-                        {isScrolled && "invert"} h-4`} />
+                {user && (
+                    <UserButton>
+                        <UserButton.MenuItems>
+                            <UserButton.Action label="My Bookings" labelIcon={<BookIcon />} onClick={() => navigate('/my-bookings')} />
+                        </UserButton.MenuItems>
+                    </UserButton>
+                )}
+                <img onClick={() => setIsMenuOpen(!isMenuOpen)} src={assets.menuIcon} alt="menu" className={`${isScrolled ? "invert" : ""} h-4`} />
             </div>
 
             <div className={`fixed top-0 left-0 w-full h-screen bg-white text-base flex flex-col md:hidden items-center justify-center gap-6 font-medium text-gray-800 transition-all duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
@@ -104,21 +112,30 @@ const Navbar = () => {
                 </button>
 
                 {navLinks.map((link, i) => (
-                    <a key={i} href={link.path} onClick={() => setIsMenuOpen(false)}>
+                    <Link
+                        key={i}
+                        to={link.path}
+                        onClick={() => setIsMenuOpen(false)}
+                        className={`${isActive(link.path) ? "text-red-600 font-semibold" : "text-gray-800"}`}
+                    >
                         {link.name}
-                    </a>
+                    </Link>
                 ))}
 
-                {user && <button
-                    className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
-                    onClick={() => navigate('/admin')}
-                >
-                    Dashboard
-                </button>}
+                {user && (
+                    <button
+                        className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
+                        onClick={() => navigate('/admin')}
+                    >
+                        Dashboard
+                    </button>
+                )}
 
-                {!user && <button onClick={openSignIn} className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500">
-                    Login
-                </button>}
+                {!user && (
+                    <button onClick={openSignIn} className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500">
+                        Login
+                    </button>
+                )}
             </div>
         </nav>
     );
