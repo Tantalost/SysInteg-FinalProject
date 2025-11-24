@@ -128,8 +128,6 @@ const AddRoom = () => {
         </div>
       </div>
 
-</div>
-
 
       {/* Amenities */}
       <div>
