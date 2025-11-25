@@ -28,7 +28,7 @@ const Navbar = () => {
           <img 
             src={logo} 
             alt="Company Logo" 
-            className={`h-10 w-auto transition-opacity duration-200 hover:opacity-80 ${isScrolled ? 'invert' : ''}`}
+            className={`h-35 w-auto transition-opacity duration-200 hover:opacity-80 ${isScrolled ? 'invert' : ''}`}
           />
         </Link>
 
