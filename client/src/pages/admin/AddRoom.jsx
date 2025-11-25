@@ -29,7 +29,7 @@ const AddRoom = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault()
-    if (!inputs.roomType || !inputs.pricePerHour || !Object.values(images).some(img => img)) {
+    if (!inputs.name || !inputs.roomType || !inputs.pricePerHour || !Object.values(images).some(img => img)) {
       toast.error('Please fill in all fields and upload at least one image.')
       return
     }
