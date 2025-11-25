@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Title from '../../components/Title'
 import { assets } from '../../assets/assets'
 import { useAppContext } from '../../context/AppContext'
@@ -17,68 +17,103 @@ const AMENITY_OPTIONS = [
   '24/7 Support Staff',
 ]
 
+const MAX_IMAGES = 4
+
 const createAmenityState = () =>
   AMENITY_OPTIONS.reduce((acc, amenity) => {
     acc[amenity] = false
     return acc
   }, {})
 
-const createImageState = () => ({ 1: null, 2: null, 3: null, 4: null })
+const createImageSlots = () => Array.from({ length: MAX_IMAGES }, () => null)
 
-const createInitialInputs = () => ({
+const initialFormState = {
   name: '',
   roomType: '',
   pricePerHour: '',
-  amenities: createAmenityState(),
-})
+}
 
 const AddRoom = () => {
   const { axios, getToken } = useAppContext()
 
-  const [images, setImages] = useState(createImageState)
-  const [inputs, setInputs] = useState(createInitialInputs)
-  const [loading, setLoading] = useState(false)
+  const [formValues, setFormValues] = useState(initialFormState)
+  const [amenities, setAmenities] = useState(createAmenityState)
+  const [imageSlots, setImageSlots] = useState(createImageSlots)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const selectedAmenities = useMemo(
-    () => Object.entries(inputs.amenities)
-      .filter(([, active]) => active)
-      .map(([amenity]) => amenity),
-    [inputs.amenities]
+    () =>
+      Object.entries(amenities)
+        .filter(([, active]) => active)
+        .map(([amenity]) => amenity),
+    [amenities]
   )
 
-  const selectedImages = useMemo(
-    () => Object.values(images).filter(Boolean),
-    [images]
+  const selectedFiles = useMemo(
+    () => imageSlots.filter(Boolean).map(slot => slot.file),
+    [imageSlots]
   )
 
-  const handleInputChange = (field, value) => {
-    setInputs(prev => ({ ...prev, [field]: value }))
-  }
+  useEffect(() => {
+    return () => {
+      imageSlots.forEach(slot => slot?.preview && URL.revokeObjectURL(slot.preview))
+    }
+  }, [imageSlots])
 
-  const handleImageChange = (slot, file) => {
-    setImages(prev => ({ ...prev, [slot]: file || null }))
+  const handleFieldChange = (field, value) => {
+    setFormValues(prev => ({ ...prev, [field]: value }))
   }
 
   const toggleAmenity = (amenity) => {
-    setInputs(prev => ({
-      ...prev,
-      amenities: { ...prev.amenities, [amenity]: !prev.amenities[amenity] }
-    }))
+    setAmenities(prev => ({ ...prev, [amenity]: !prev[amenity] }))
   }
 
-  const onSubmitHandler = async (e) => {
-    e.preventDefault()
-    if (!inputs.name || !inputs.roomType || !inputs.pricePerHour) {
-      toast.error('Please fill in all fields.')
+  const updateImageSlot = (index, file) => {
+    setImageSlots(prev => {
+      const next = [...prev]
+      if (prev[index]?.preview) {
+        URL.revokeObjectURL(prev[index].preview)
+      }
+
+      next[index] = file ? { file, preview: URL.createObjectURL(file) } : null
+      return next
+    })
+  }
+
+  const resetImages = () => {
+    setImageSlots(prev => {
+      prev.forEach(slot => slot?.preview && URL.revokeObjectURL(slot.preview))
+      return createImageSlots()
+    })
+  }
+
+  const resetForm = () => {
+    setFormValues(initialFormState)
+    setAmenities(createAmenityState())
+    resetImages()
+  }
+
+  const validateForm = () => {
+    if (!formValues.name.trim()) return 'Room name is required.'
+    if (!formValues.roomType) return 'Select a room type.'
+
+    const price = Number(formValues.pricePerHour)
+    if (!price || price <= 0) return 'Enter a valid price per hour.'
+
+    if (!selectedFiles.length) return 'Upload at least one room image.'
+    return null
+  }
+
+  const onSubmitHandler = async (event) => {
+    event.preventDefault()
+    const validationError = validateForm()
+
+    if (validationError) {
+      toast.error(validationError)
       return
     }
 
-    if (!selectedImages.length) {
-      toast.error('Upload at least one room image.')
-      return
-    }
-
-    setLoading(true)
+    setIsSubmitting(true)
     try {
       const token = await getToken()
       if (!token) {
@@ -87,34 +122,31 @@ const AddRoom = () => {
       }
 
       const formData = new FormData()
-      formData.append('name', inputs.name.trim())
-      formData.append('roomType', inputs.roomType)
-      formData.append('pricePerHour', inputs.pricePerHour)
+      formData.append('name', formValues.name.trim())
+      formData.append('roomType', formValues.roomType)
+      formData.append('pricePerHour', Number(formValues.pricePerHour))
       formData.append('amenities', JSON.stringify(selectedAmenities))
-      selectedImages.forEach(file => formData.append('images', file))
+      selectedFiles.forEach(file => formData.append('images', file))
 
       const { data } = await axios.post('/api/properties', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        withCredentials: true,
       })
 
       if (data.success) {
         toast.success('Room added successfully')
-        setInputs(createInitialInputs())
-        setImages(createImageState())
+        resetForm()
       } else {
         toast.error(data.message || 'Failed to add room')
       }
     } catch (error) {
-      console.log("AXIOS ERROR:", error);
       toast.error(error.response?.data?.message || error.message)
     } finally {
-      setLoading(false)
+      setIsSubmitting(false)
     }
   }
-
-  const removeImage = (key) => handleImageChange(key, null)
 
   return (
     <form
@@ -123,30 +155,33 @@ const AddRoom = () => {
     >
       <Title align="left" font="outfit" title="Add Room" />
 
-      {/* Images */}
+      {/* Image Uploader */}
       <div>
-        <p className="text-gray-700 font-semibold mb-3">Upload Images</p>
+        <div className="flex items-center justify-between">
+          <p className="text-gray-700 font-semibold mb-3">Upload Images</p>
+          <p className="text-xs text-gray-500">{selectedFiles.length}/{MAX_IMAGES} selected</p>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {Object.keys(images).map((key) => (
-            <div key={key} className="relative group h-32 rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg transition">
-              <label htmlFor={`roomImage${key}`} className="cursor-pointer w-full h-full flex items-center justify-center bg-gray-50">
+          {imageSlots.map((slot, index) => (
+            <div key={index} className="relative group h-32 rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg transition">
+              <label htmlFor={`roomImage${index}`} className="cursor-pointer w-full h-full flex items-center justify-center bg-gray-50">
                 <img
-                  src={images[key] ? URL.createObjectURL(images[key]) : assets.uploadArea}
-                  alt={`Room ${key}`}
+                  src={slot ? slot.preview : assets.uploadArea}
+                  alt={`Room slot ${index + 1}`}
                   className="object-cover w-full h-full rounded-xl"
                 />
                 <input
                   type="file"
                   accept="image/*"
-                  id={`roomImage${key}`}
+                  id={`roomImage${index}`}
                   hidden
-                  onChange={e => handleImageChange(key, e.target.files?.[0] || null)}
+                  onChange={e => updateImageSlot(index, e.target.files?.[0] || null)}
                 />
               </label>
-              {images[key] && (
+              {slot && (
                 <button
                   type="button"
-                  onClick={() => removeImage(key)}
+                  onClick={() => updateImageSlot(index, null)}
                   className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
                 >
                   <FaTimes size={12} />
@@ -158,82 +193,94 @@ const AddRoom = () => {
       </div>
 
       <div className='w-full flex max-sm:flex-col sm:gap-4 mt-4'>
-        {/* Room Name and Type Container */}
-        <div className='flex-1 flex max-sm:flex-col sm:gap-4'>
-          {/* Room Name Input */}
-          <div className='flex-1'>
-            <p className='text-gray-800 mt-4'>Room Name</p>
-            <input
-              type="text"
-              value={inputs.name}
-              onChange={e => handleInputChange('name', e.target.value)}
-              className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'
-              required
-            />
-          </div>
+        <div className='flex-1 flex max-sm:flex-col sm:gap-4'>
+          <div className='flex-1'>
+            <p className='text-gray-800 mt-4'>Room Name</p>
+            <input
+              type="text"
+              value={formValues.name}
+              onChange={e => handleFieldChange('name', e.target.value)}
+              className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'
+              required
+            />
+          </div>
 
-          {/* Room Type Select */}
-          <div className='flex-1'>
-            <p className='text-gray-800 mt-4'>Room Type</p>
-            <select
-              value={inputs.roomType}
-              onChange={e => handleInputChange('roomType', e.target.value)}
-              className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'
-              required
-            >
-              <option value="">Select Room Type</option>
-              <option value="Gaming Room">Gaming Room</option>
-              <option value="KTV Room">KTV Room</option>
-              <option value="Movie Room">Movie Room</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Price Input */}
-        <div>
-          <p className='mt-4 text-gray-800'>
-            Price <span className='text-xs'>/hour</span>
-          </p>
-          <input
-            type="number"
-            className='border border-gray-300 mt-1 rounded p-2 w-24'
-            value={inputs.pricePerHour}
-            onChange={e => handleInputChange('pricePerHour', e.target.value)}
-            required
-          />
-        </div>
-      </div>
-
-
-      {/* Amenities */}
-      <div>
-        <p className="text-gray-700 font-semibold mb-3">Amenities</p>
-        <div className="flex flex-wrap gap-3">
-          {Object.keys(inputs.amenities).map((amenity, index) => (
-            <button
-              type="button"
-              key={index}
-              onClick={() => toggleAmenity(amenity)}
-              className={`px-4 py-2 rounded-full border transition ${
-                inputs.amenities[amenity]
-                  ? 'bg-primary text-white border-primary'
-                  : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-primary hover:text-white'
-              }`}
+          <div className='flex-1'>
+            <p className='text-gray-800 mt-4'>Room Type</p>
+            <select
+              value={formValues.roomType}
+              onChange={e => handleFieldChange('roomType', e.target.value)}
+              className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'
+              required
             >
-              {amenity}
-            </button>
-          ))}
+              <option value="">Select Room Type</option>
+              <option value="Gaming Room">Gaming Room</option>
+              <option value="KTV Room">KTV Room</option>
+              <option value="Movie Room">Movie Room</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <p className='mt-4 text-gray-800'>
+            Price <span className='text-xs'>/hour</span>
+          </p>
+          <input
+            type="number"
+            min="1"
+            className='border border-gray-300 mt-1 rounded p-2 w-28'
+            value={formValues.pricePerHour}
+            onChange={e => handleFieldChange('pricePerHour', e.target.value)}
+            required
+          />
         </div>
       </div>
 
-      {/* Submit Button */}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full sm:w-auto bg-primary text-white px-6 py-3 rounded-xl text-lg font-semibold hover:bg-primary-dark transition disabled:opacity-50"
-      >
-        {loading ? 'Adding...' : 'Add Room'}
-      </button>
+      {/* Amenities */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-gray-700 font-semibold">Amenities</p>
+          <p className="text-xs text-gray-500">{selectedAmenities.length} selected</p>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          {Object.keys(amenities).map((amenity) => {
+            const active = amenities[amenity]
+            return (
+              <button
+                type="button"
+                key={amenity}
+                onClick={() => toggleAmenity(amenity)}
+                className={`px-4 py-2 rounded-full border transition ${
+                  active
+                    ? 'bg-primary text-white border-primary'
+                    : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-primary hover:text-white'
+                }`}
+              >
+                {amenity}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full sm:w-auto bg-primary text-white px-6 py-3 rounded-xl text-lg font-semibold hover:bg-primary-dark transition disabled:opacity-50"
+        >
+          {isSubmitting ? 'Uploading...' : 'Add Room'}
+        </button>
+        <button
+          type="button"
+          onClick={resetForm}
+          disabled={isSubmitting}
+          className="w-full sm:w-auto border border-gray-300 text-gray-700 px-6 py-3 rounded-xl text-lg font-semibold hover:bg-gray-50 transition disabled:opacity-50"
+        >
+          Reset form
+        </button>
+      </div>
     </form>
   )
 }

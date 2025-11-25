@@ -14,8 +14,16 @@ export const createProperty = async (req, res) => {
             return res.json({ success: false, message: 'No images uploaded' });
         }
 
-        const room = await Room.findOne({ admin: req.auth().userId });
-        if (!room) return res.json({ success: false, message: 'Room/Host profile not found' });
+        let room = await Room.findOne({ admin: req.auth().userId });
+        if (!room) {
+            const fallbackName = `${req.user?.username || 'Host'}'s Room`;
+            room = await Room.create({
+                name: fallbackName,
+                address: 'To be updated',
+                admin: req.auth().userId,
+                properties: []
+            });
+        }
 
         const uploadedImages = req.files.map(async (file) => {
             if(!file.path) throw new Error("File path is missing. Check uploadMiddleware.");
