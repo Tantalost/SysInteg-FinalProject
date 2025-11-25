@@ -96,7 +96,6 @@ export const durations = [
     "4 hours",
 ];
 
-// Limited  Offers Dummy Data
 export const limitedOffers = [
     { _id: 1, title: "KTV Room",  priceOff: 25, expiryDate: "Aug 31", image: limitedOfferCardImg1 },
     { _id: 2, title: "Movie Room",  priceOff: 20, expiryDate: "Sep 20", image: limitedOfferCardImg2 },
