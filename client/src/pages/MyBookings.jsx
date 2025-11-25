@@ -53,13 +53,11 @@ const MyBookings = () => {
 
     return (
         <div className="min-h-screen flex flex-col">
-            {/* MAIN PAGE CONTENT */}
             <main className="flex-1 container mx-auto px-4 py-20 max-w-5xl">
                 <h1 className="text-3xl font-bold text-gray-800 mb-8">
                     My Bookings
                 </h1>
 
-                {/* LOADING STATE */}
                 {isLoading && (
                     <div className="space-y-4 animate-pulse">
                         {[1, 2, 3].map((i) => (
@@ -68,14 +66,12 @@ const MyBookings = () => {
                     </div>
                 )}
 
-                {/* EMPTY STATE */}
                 {!isLoading && bookings.length === 0 && (
                     <div className="text-center py-20 text-gray-500">
                         <p className="text-lg">No bookings yet.</p>
                     </div>
                 )}
 
-                {/* BOOKINGS LIST */}
                 <div className="grid gap-6">
                     {bookings.map((booking, index) => {
                         const property = booking.property || {};
@@ -86,7 +82,6 @@ const MyBookings = () => {
                                 key={index}
                                 className="flex flex-col md:flex-row items-start gap-5 p-5 rounded-xl border bg-white shadow-md hover:shadow-lg transition-all"
                             >
-                                {/* IMAGE */}
                                 <div className="w-full md:w-48 h-36 rounded-lg overflow-hidden bg-gray-200">
                                     <img
                                         src={property.images?.[0] || fallbackImage}
@@ -117,15 +112,14 @@ const MyBookings = () => {
                                 <div className="flex items-center">
                                     <span
                                         className={`px-3 py-1 rounded-full text-sm ${booking.isPaid
-                                                ? "bg-green-100 text-green-800"
-                                                : "bg-yellow-100 text-yellow-800"
+                                            ? "bg-green-100 text-green-800"
+                                            : "bg-yellow-100 text-yellow-800"
                                             }`}
                                     >
                                         {booking.isPaid ? "Paid" : "Pay at Location"}
                                     </span>
                                 </div>
 
-                                {/* FIXED: BUTTON MOVED *INSIDE* THE MAIN WRAPPER */}
                                 {!booking.isPaid && (
                                     <button
                                         onClick={() => handlePayment(booking._id)}

@@ -9,6 +9,7 @@ import roomRouter from './routes/roomRoutes.js';
 import connectCloudinary from './configs/cloudinary.js';
 import propertyRouter from './routes/propertyRoutes.js';
 import bookingRouter from './routes/bookingRoutes.js';
+import { stripeWebhooks } from './controllers/stripeWebhooks.js';
 
 
 connectDB()
@@ -23,6 +24,9 @@ app.use(clerkMiddleware())
 
 // API for Webhooks
 app.use("/api/clerk", clearkWebhooks);
+
+// API for Stripe Webhooks
+app.post('/api/stripe', express.raw({type: "application/json"}), stripeWebhooks);
 
 app.get('/', (req, res)=> res.send("API is working"))
 app.use('/api/user', userRouter)
