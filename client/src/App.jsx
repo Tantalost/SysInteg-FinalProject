@@ -16,6 +16,7 @@ import Dashboard from './pages/admin/Dashboard.jsx';
 import { Toaster } from 'react-hot-toast';
 import { useAppContext } from './context/AppContext.jsx';
 import Loader from './components/Loader.jsx';
+import PaymentSuccess from './pages/PaymentSuccess.jsx';
 
 const App = () => {
 
