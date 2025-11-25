@@ -4,49 +4,29 @@ import { useAppContext } from '../context/AppContext';
 import { toast } from 'react-hot-toast';
 
 const PaymentSuccess = () => {
-    // Hooks to handle URL parameters and navigation
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     
-    // Custom hook to access axios, tokens, etc.
     const { axios, getToken } = useAppContext();
     
     // Get the bookingId from the URL query parameters: ?booking=12345
     const bookingId = searchParams.get('booking');
     
-    // The core logic runs when the component loads
     useEffect(() => {
         const verifyBooking = async () => {
-            // Check if we actually have a booking ID to work with
             if (!bookingId) {
                 toast.error("Booking ID not found in URL. Cannot verify payment.");
                 setTimeout(() => navigate('/my-bookings'), 3000);
                 return;
             }
-
-            // We rely on the Stripe Webhook to update the DB, 
-            // but we can call a lighter confirmation API here if needed.
-            // However, the cleanest approach is to simply display success 
-            // and rely ONLY on the webhook for the DB update.
-
-            // OPTIONAL: You can add an API call here to confirm the status 
-            // from the backend, but since you are using webhooks, 
-            // the main job is just to display the success message 
-            // and redirect while the webhook runs asynchronously.
-
             toast.success("Payment successful! Please wait while we confirm your booking details.");
-            
-            // Redirect back to 'My Bookings' after a short delay (e.g., 3 seconds) 
-            // to give the Stripe Webhook time to process and update the DB.
             setTimeout(() => {
-                // The navigate function here will also trigger a refresh 
-                // of the MyBookings data, showing the new paid status.
                 navigate('/my-bookings');
             }, 3000); 
         };
 
         verifyBooking();
-    }, [bookingId, navigate, axios]); // Dependencies
+    }, [bookingId, navigate, axios]); 
 
     return (
         <div className="min-h-[60vh] flex items-center justify-center">
