@@ -9,6 +9,7 @@ const BookIcon = () => (
         <path stroke="#D10000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4" />
     </svg>
 )
+const ADMIN_USER_ID = "user_35jwIVDrqhFillS7GlLQvnMEyll";
 
 const Navbar = () => {
     const navLinks = [
@@ -54,28 +55,28 @@ const Navbar = () => {
                         key={i}
                         to={link.path}
                         className={`group flex flex-col gap-0.5 transition-all duration-300 
-                            ${isActive(link.path) 
-                                ? "text-red-600 font-semibold" 
-                                : isScrolled 
-                                    ? "text-gray-700" 
+                            ${isActive(link.path)
+                                ? "text-red-600 font-semibold"
+                                : isScrolled
+                                    ? "text-gray-700"
                                     : "text-white"}`
                         }
                     >
                         {link.name}
-                        <div className={`${isActive(link.path) 
-                                            ? "bg-red-600" 
-                                            : isScrolled 
-                                                ? "bg-gray-700" 
-                                                : "bg-white"} 
+                        <div className={`${isActive(link.path)
+                            ? "bg-red-600"
+                            : isScrolled
+                                ? "bg-gray-700"
+                                : "bg-white"} 
                                         h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
                     </Link>
                 ))}
-                {user && (
+                {user && user.id === ADMIN_USER_ID && (
                     <button
                         className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`}
                         onClick={() => navigate('/admin')}
                     >
-                        Dashboard 
+                        Dashboard
                     </button>
                 )}
             </div>
@@ -122,7 +123,7 @@ const Navbar = () => {
                     </Link>
                 ))}
 
-                {user && (
+                {user && user.id === ADMIN_USER_ID && (
                     <button
                         className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
                         onClick={() => navigate('/admin')}
