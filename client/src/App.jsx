@@ -44,7 +44,6 @@ const App = () => {
           <Route path='/about' element={<About />} />
           <Route path='/rooms/:id' element={<RoomDetails />} />
           <Route path='/my-bookings' element={<MyBookings />} />
-          <Route path='/*' element={<NotFound />} />
            <Route path='/loader/:nextUrl' element={<Loader />} />
 
           <Route path='/admin' element={<Layout />}>
