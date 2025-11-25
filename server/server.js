@@ -1,6 +1,5 @@
 import express from 'express';
 import "dotenv/config.js";
-import cors from 'cors';
 import connectDB from './configs/db.js';
 import { clerkMiddleware } from '@clerk/express'
 import clearkWebhooks from './controllers/clerkWebhooks.js';
@@ -11,43 +10,49 @@ import propertyRouter from './routes/propertyRoutes.js';
 import bookingRouter from './routes/bookingRoutes.js';
 import { stripeWebhooks } from './controllers/stripeWebhooks.js';
 
-
 const app = express();
 
-connectDB()
-connectCloudinary()
+connectDB();
+connectCloudinary();
 
-const corsOptions = {
-  origin: true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
+// ---------- FIX CORS (PLACE THIS FIRST) ----------
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://cynergy-self.vercel.app");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
 
-const corsMiddleware = cors(corsOptions);
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
 
+  next();
+});
+// -------------------------------------------------
+
+// Stripe webhook must stay RAW
 app.post(
-  '/api/bookings/webhook', 
-  express.raw({ type: 'application/json' }), 
+  '/api/bookings/webhook',
+  express.raw({ type: 'application/json' }),
   stripeWebhooks
 );
 
-app.use(corsMiddleware) // Enable CORS for all routes
+// JSON parser
+app.use(express.json());
 
-// Middleware to parse JSON bodies
-app.use(express.json()) 
-app.use(clerkMiddleware())
+// Clerk
+app.use(clerkMiddleware());
 
-// API for Webhooks
-app.use("/api/clerk", clearkWebhooks);
-
-app.get('/', (req, res)=> res.send("API is working"))
-app.use('/api/user', userRouter)
-app.use('/api/rooms', roomRouter)
-app.use('/api/properties', propertyRouter)
-app.use('/api/bookings', bookingRouter)
-
+// Routes
+app.get('/', (req, res) => res.send("API is working"));
+app.use('/api/clerk', clearkWebhooks);
+app.use('/api/user', userRouter);
+app.use('/api/rooms', roomRouter);
+app.use('/api/properties', propertyRouter);
+app.use('/api/bookings', bookingRouter);
 
 const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, ()=> console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
