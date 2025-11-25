@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Ratings from '../components/Ratings.jsx';
+import AmenityIcon from '../components/AmenityIcon';
 import { useAppContext } from '../context/AppContext.jsx';
 import { facilityIcons } from '../assets/assets.js';
 
@@ -152,7 +153,7 @@ const Services = () => {
                             <div className='flex flex-wrap items-center mt-3 mb-6 gap-4'>
                                 {room.amenities.map((item, index) => (
                                     <div key={index} className='flex items-center gap-2 px-3 py-2 rounded-lg bg-[#F5F5FF]/70'>
-                                        <img src={facilityIcons[item]} alt={item} className='w-5 h-5' />
+                                        <AmenityIcon amenity={item} className='w-5 h-5 text-gray-700' />
                                         <p className='text-xs'>{item}</p>
                                     </div>
                                 ))}

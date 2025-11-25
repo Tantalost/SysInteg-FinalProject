@@ -55,6 +55,35 @@ export const checkAvailabilityAPI = async (req, res) => {
     }
 };
 
+// NEW: Function to get all booked slots for a specific date (for the grid)
+export const getRoomAvailability = async (req, res) => {
+    try {
+        const { roomId, date } = req.query;
+
+        // 1. Create UTC start and end of the day
+        // This ensures we search from 00:00:00Z to 23:59:59Z
+        const startOfDay = new Date(`${date}T00:00:00.000Z`);
+        const endOfDay = new Date(`${date}T23:59:59.999Z`);
+
+        const bookings = await Booking.find({
+            room: roomId,
+            checkInDate: { $lt: endOfDay },
+            checkOutDate: { $gt: startOfDay }
+        }).select('checkInDate checkOutDate');
+
+        const bookedRanges = bookings.map(b => ({
+            start: b.checkInDate,
+            end: b.checkOutDate
+        }));
+
+        res.status(200).json({ success: true, bookedRanges });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Error" });
+    }
+};
+
 // API to create a new booking (POST /api/bookings/book)
 export const createBooking = async (req, res) => {
     try {
@@ -321,9 +350,9 @@ export const stripePayment = async (req, res) => {
         if (!booking) {
             return res.json({ success: false, message: "Booking not found" });
         }
-        
+
         console.log("Stripe success URL:", `${process.env.CLIENT_URL}/payment-success?booking=${bookingId}`);
-console.log("Stripe cancel URL:", `${process.env.CLIENT_URL}/my-bookings`);
+        console.log("Stripe cancel URL:", `${process.env.CLIENT_URL}/my-bookings`);
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",

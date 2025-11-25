@@ -10,79 +10,79 @@ const Rates = () => {
         <Title title='Featured Rooms' subTitle="We've paired our incredible rooms with featured movies and games that'll transport you to another world. Whether you're a gamer on a quest or a cinephile looking for a scene change, your next adventure starts here." />
             <div className="flex flex-wrap items-center justify-center gap-6">
                 <div className="w-72 bg-white text-center text-gray-800/80 border border-gray-200 p-6 pb-16 rounded-lg">
-                    <p className="font-semibold">Basic</p>
-                    <h1 className="text-3xl font-semibold">₱29<span class="text-gray-500 text-sm font-normal">/month</span></h1>
+                    <p className="font-semibold">Gaming Room</p>
+                    <h1 className="text-3xl font-semibold">₱399<span class="text-gray-500 text-sm font-normal">/hour</span></h1>
                     <ul className="list-none text-gray-500 text-sm mt-6 space-y-1">
                         <li className="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Access to all basic courses</p>
+                            <p>unlimited premium games</p>
                         </li>
                         <li className="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Community support</p>
+                            <p>private gaming room</p>
                         </li>
                         <li className="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>10 practice projects</p>
+                            <p>Access to Premium Accessories</p>
                         </li>
                         <li class="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Course completion certificate</p>
+                            <p>Multiplayer Gaming</p>
                         </li>
                         <li className="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Basic code review</p>
+                            <p>Personalized Gaming Setup</p>
                         </li>
                     </ul>
                     <button type="button" className="bg-red-500 text-sm w-full py-2 rounded text-white font-medium mt-7 hover:bg-red-800 transition-all">
-                        Get Started
+                        Book Now
                     </button>
                 </div>
 
                 <div className="w-72 bg-red-900 relative text-center text-white border border-gray-500/30 p-6 pb-14 rounded-lg">
                     <p className="absolute px-3 text-sm -top-3.5 left-3.5 py-1 bg-[#D10000] rounded-full">Most Popular</p>
-                    <p className="font-semibold pt-2">Pro</p>
-                    <h1 className="text-3xl font-semibold">₱79<span class="text-sm font-normal">/month</span></h1>
+                    <p className="font-semibold pt-2">Movie Room</p>
+                    <h1 className="text-3xl font-semibold">₱299<span class="text-sm font-normal">/hour</span></h1>
                     <ul className="list-none text-white text-sm mt-6 space-y-1">
                         <li className="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Access to all Pro courses</p>
+                            <p>Netflix, Disney+, HBO Max, and more</p>
                         </li>
                         <li class="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Priority community support</p>
+                            <p>High-Quality Sound System</p>
                         </li>
                         <li class="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>30 practice projects</p>
+                            <p>Exclusive Private Room Access</p>
                         </li>
                         <li class="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Course completion certificate</p>
+                            <p>Free Movie Switching</p>
                         </li>
                         <li class="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Advance code review</p>
+                            <p>Food & Beverages</p>
                         </li>
                         <li class="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -94,47 +94,47 @@ const Rates = () => {
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Job assistance</p>
+                            <p>Group Booking Discounts</p>
                         </li>
                     </ul>
                     <button type="button" class="bg-white text-sm w-full py-2 rounded text-red-800 font-medium mt-7 hover:bg-gray-200 transition-all">
-                        Get Started
+                        Book Now
                     </button>
                 </div>
 
                 <div class="w-72 bg-white text-center text-gray-800/80 border border-gray-200 p-6 rounded-lg">
-                    <p class="font-semibold">Enterprise</p>
-                    <h1 class="text-3xl font-semibold">₱199<span class="text-gray-500 text-sm font-normal">/month</span></h1>
+                    <p class="font-semibold">Karaoke Room</p>
+                    <h1 class="text-3xl font-semibold">₱249<span class="text-gray-500 text-sm font-normal">/hour</span></h1>
                     <ul class="list-none text-gray-500 text-sm mt-6 space-y-1">
                         <li class="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Access to all courses</p>
+                            <p>Private KTV Rooms</p>
                         </li>
                         <li class="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Dedicated support</p>
+                            <p>Professional Sound Equipment</p>
                         </li>
                         <li class="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Unlimited projects</p>
+                            <p>Massive Karaoke Song Library</p>
                         </li>
                         <li class="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Course completion certificate</p>
+                            <p>Large Screen for Group Visuals</p>
                         </li>
                         <li class="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Premium code review</p>
+                            <p>Food & Beverages</p>
                         </li>
                         <li class="flex items-center gap-2">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -146,11 +146,11 @@ const Rates = () => {
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.162 13.5 2.887 9.225l1.07-1.069 3.205 3.207 6.882-6.882 1.069 1.07z" fill="#D10000" />
                             </svg>
-                            <p>Job guarantee</p>
+                            <p>Group-Friendly Setup</p>
                         </li>
                     </ul>
                     <button type="button" class="bg-red-500 text-sm w-full py-2 rounded text-white font-medium mt-7 hover:bg-red-600 transition-all">
-                        Get Started
+                       Book Now
                     </button>
                 </div>
             </div>

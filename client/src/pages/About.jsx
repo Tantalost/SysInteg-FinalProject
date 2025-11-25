@@ -6,27 +6,27 @@ const About = () => {
         {
             name: "John Lloyd Climaco",
             role: "Full Stack Developer",
-            description: "Specialized in React and Node.js development, focusing on creating seamless user experiences."
+            description: "Skilled in building and maintaining both front-end and back-end applications, capable of delivering complete end-to-end web or mobile solutions."
         },
         {
             name: "Stephanie Villamor",
             role: "UI/UX Designer",
-            description: "Expert in API design and database management, ensuring robust and scalable systems."
+            description: "Designs intuitive and engaging user interfaces while ensuring a seamless user experience across web and mobile applications."
         },
         {
             name: "Vennashier Malali",
             role: "Quality Assurance Engineer",
-            description: "Passionate about UI/UX design and creating responsive, modern web interfaces."
+            description: "Tests, monitors, and ensures software quality by identifying bugs and verifying functionality to deliver reliable, high-performing applications."
         },
         {
             name: "Justin James Alviar",
             role: "Project Manager",
-            description: "Manages deployment pipelines and infrastructure, keeping the platform running smoothly."
+            description: "Plans, executes, and oversees projects, coordinating teams and resources to ensure timely delivery and alignment with business objectives."
         },
         {
             name: "Jayna Sahibul",
             role: "Business Analyst",
-            description: "Focused on cross-platform mobile development and SMS notification integration."
+            description: "Analyzes business needs, gathers requirements, and translates them into actionable solutions to drive efficiency and support decision-making."
         }
     ];
 
@@ -41,24 +41,28 @@ const About = () => {
                 
                 <div className='mt-10 space-y-6 text-gray-700'>
                     <p className='text-base md:text-lg leading-relaxed'>
-                        Cynergy is an innovative <strong>Online Booking Management System</strong> enhanced with 
-                        <strong> real-time SMS notifications</strong>. Our platform is designed to revolutionize 
-                        the way hotels and accommodations manage their bookings, providing a streamlined, secure, 
-                        and efficient solution for both property owners and guests.
+
+                        Cynergy is an innovative your ultimate destination for private entertainment experiences. 
+                        We specialize in providing <strong>exclusive movie rooms, gaming hubs, and karaoke rooms</strong>
+                        that you can conveniently book online. Our platform is designed to make your leisure time 
+                        seamless and enjoyable—whether you are watching the latest blockbuster, gaming with friends, 
+                        or singing your favorite hits.
+                      
                     </p>
                     
                     <p className='text-base md:text-lg leading-relaxed'>
-                        Whether you're a traveler looking for the perfect room or a property owner seeking to 
-                        maximize your bookings, Cynergy offers an intuitive interface that makes the entire 
-                        process effortless. From browsing available rooms to receiving instant booking 
-                        confirmations via SMS, we've got you covered every step of the way.
+                        With a focus on comfort, privacy, and personalized perks, we ensure every booking delivers a 
+                        memorable experience. From premium equipment and immersive sound systems to customizable room 
+                        settings and tasty refreshments, every detail is tailored to elevate your entertainment.
                     </p>
                     
                     <p className='text-base md:text-lg leading-relaxed'>
-                        Our mission is to bridge the gap between technology and hospitality, creating a platform 
-                        that not only simplifies booking management but also enhances the overall experience 
-                        for everyone involved. With features like real-time availability, secure payment processing, 
-                        and instant notifications, Cynergy is your one-stop solution for modern booking needs.
+                        Our mission is to redefine private entertainment by bridging technology and hospitality. 
+                        Cynergy provides a seamless platform to book VIP movie rooms, gaming hubs, and karaoke suites, 
+                        making the entire experience effortless and enjoyable. With features like real-time availability, 
+                        secure payments, and instant booking confirmations, we ensure that every visit is stress-free, 
+                        personalized, and unforgettable—whether you are watching a blockbuster, competing in a gaming 
+                        session, or singing your heart out with friends.
                     </p>
                 </div>
             </div>
