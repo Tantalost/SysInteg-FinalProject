@@ -15,6 +15,12 @@ import { stripeWebhooks } from './controllers/stripeWebhooks.js';
 connectDB()
 connectCloudinary()
 
+app.post(
+  '/api/bookings/webhook', 
+  express.raw({ type: 'application/json' }), 
+  stripeWebhooks
+);
+
 const app = express();
 app.use(cors()) // Enable CORS for all routes
 
@@ -24,9 +30,6 @@ app.use(clerkMiddleware())
 
 // API for Webhooks
 app.use("/api/clerk", clearkWebhooks);
-
-// API for Stripe Webhooks
-app.post('/api/stripe', express.raw({type: "application/json"}), stripeWebhooks);
 
 app.get('/', (req, res)=> res.send("API is working"))
 app.use('/api/user', userRouter)

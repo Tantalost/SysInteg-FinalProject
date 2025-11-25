@@ -1,35 +1,51 @@
 import Stripe from "stripe";
 import Booking from "../models/Booking.js";
 
-//API for stripe webhooks
-
 export const stripeWebhooks = async (request, response) => {
-    // Stripe Gateway initialize
-    const stripeInstance = new stripeWebhooks(process.env.STRIPE_SECRET_KEY);
+    // 1. Correct Initialization
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
     const sig = request.headers['stripe-signature'];
     let event;
 
     try {
-        event = stripeInstance.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
-    } catch (error) {
-        response.status(400).send('Webhook Error: ${err.message}')
+        // 2. Construct the event using the RAW body (Crucial!)
+        event = stripe.webhooks.constructEvent(
+            request.body, 
+            sig, 
+            process.env.STRIPE_WEBHOOK_SECRET
+        );
+    } catch (err) {
+        console.error("⚠️ Webhook signature verification failed.", err.message);
+        return response.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    //Handle the event
-    if (event.type === "payment_intent.succeeded") {
-        const paymentIntent = event.data.object;
-        const paymentIntentId = paymentIntent.id;
+    // 3. Handle the Event
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
 
-        //Get the session metadata
-        const session = await stripeInstance.checkout.sessions.list({
-            payment_intent: paymentIntentId,
-        });
+        // 4. Retrieve the bookingId we stored in Step 1
+        const bookingId = session.metadata?.bookingId;
 
-        const { bookingId } = session.data[0].metadata;
-        //Mark Payment as Paid
-        await Booking.findByIdAndUpdate(bookingId, { isPaid: true, paymentMethod: "Stripe" })
+        if (bookingId) {
+            try {
+                await Booking.findByIdAndUpdate(bookingId, { 
+                    isPaid: true, 
+                    paymentMethod: "Stripe",
+                    paymentId: session.payment_intent // Optional: store Stripe ID
+                });
+                console.log(`✅ Booking ${bookingId} marked as paid.`);
+            } catch (error) {
+                console.error('Error updating booking in DB:', error);
+                return response.status(500).json({ error: 'Database update failed' });
+            }
+        } else {
+            console.error('❌ No bookingId found in session metadata');
+        }
     } else {
-        console.log("Unhandled event type:", event.type)
+        console.log(`Unhandled event type: ${event.type}`);
     }
+
+    // Return a 200 response to acknowledge receipt of the event
     response.json({ received: true });
-}
+};
