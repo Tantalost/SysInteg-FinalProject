@@ -13,6 +13,7 @@ import About from './pages/About.jsx'
 import ListRoom from './pages/admin/ListRoom.jsx';
 import AddRoom from './pages/admin/AddRoom.jsx';
 import Dashboard from './pages/admin/Dashboard.jsx';
+import Archive from './pages/admin/Archive.jsx';
 import { Toaster } from 'react-hot-toast';
 import { useAppContext } from './context/AppContext.jsx';
 import Loader from './components/Loader.jsx';
@@ -51,6 +52,7 @@ const App = () => {
 
             <Route path='add-room' element={hasRooms ? <Navigate to="/admin" replace /> : <AddRoom />} />
             <Route path='list-room' element={<ListRoom />} />
+            <Route path='archive' element={<Archive />} />
           </Route>
         </Routes>
       </div>
