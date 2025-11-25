@@ -141,7 +141,7 @@ export const userDummyData = {
     ]
 }
 
-// Property Dummy Data
+// Property Dummy Datas
 export const propertyDummyData = {
     "_id": "67f76393197ac559e4089b72",
     "name": "Gaming Room",
