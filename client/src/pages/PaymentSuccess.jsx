@@ -19,14 +19,35 @@ const PaymentSuccess = () => {
                 setTimeout(() => navigate('/my-bookings'), 3000);
                 return;
             }
-            toast.success("Payment successful! Please wait while we confirm your booking details.");
-            setTimeout(() => {
-                navigate('/my-bookings');
-            }, 3000); 
+
+            try {
+                const token = await getToken();
+                if (!token) {
+                    toast.error("Login required to confirm payment.");
+                    setTimeout(() => navigate('/my-bookings'), 3000);
+                    return;
+                }
+
+                const { data } = await axios.post(
+                    `/api/bookings/${bookingId}/confirm-payment`,
+                    {},
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+
+                if (data.success) {
+                    toast.success("Payment confirmed! Redirecting to your bookings.");
+                } else {
+                    toast.error(data.message || "Unable to confirm payment.");
+                }
+            } catch (error) {
+                toast.error(error.response?.data?.message || error.message);
+            } finally {
+                setTimeout(() => navigate('/my-bookings'), 3000);
+            }
         };
 
         verifyBooking();
-    }, [bookingId, navigate, axios]); 
+    }, [bookingId, navigate, axios, getToken]); 
 
     return (
         <div className="min-h-[60vh] flex items-center justify-center">

@@ -337,6 +337,45 @@ export const cancelBooking = async (req, res) => {
     }
 };
 
+export const confirmBookingPayment = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.json({ success: false, message: "Booking id is required" });
+        }
+
+        if (!req.user?._id) {
+            return res.json({ success: false, message: "User authentication required" });
+        }
+
+        const booking = await Booking.findById(id);
+
+        if (!booking) {
+            return res.json({ success: false, message: "Booking not found" });
+        }
+
+        if (booking.user.toString() !== req.user._id.toString()) {
+            return res.json({ success: false, message: "You cannot update this booking" });
+        }
+
+        if (booking.isPaid) {
+            return res.json({ success: true, message: "Booking already marked as paid" });
+        }
+
+        booking.isPaid = true;
+        booking.paymentMethod = 'Stripe';
+        booking.paymentId = booking.paymentId || `manual-${Date.now()}`;
+        await booking.save();
+
+        res.json({ success: true, message: "Booking marked as paid", booking });
+
+    } catch (error) {
+        console.error("confirmBookingPayment error:", error);
+        res.json({ success: false, message: "Failed to confirm payment" });
+    }
+};
+
 // Optional: Get all bookings for a specific room (GET /api/bookings/room/:roomId)
 export const getBookingsByRoom = async (req, res) => {
     try {
