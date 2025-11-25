@@ -113,11 +113,11 @@ const MyBookings = () => {
 
                                 <div className="flex-1">
                                     <h2 className="text-xl font-semibold">
-                                        {booking.property?.name || "Property No Longer Exists"}
+                                        {booking.name || "Property No Longer Exists"}
                                     </h2>
 
                                     <p className="text-gray-600">
-                                        Room: {room.name || room.roomNumber || "Room Info Unavailable"}
+                                        Room: {booking.roomType || room.roomNumber || "Room Info Unavailable"}
                                     </p>
 
                                     <p className="text-sm text-gray-500">
