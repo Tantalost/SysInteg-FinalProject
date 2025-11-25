@@ -23,14 +23,7 @@ app.post(
   stripeWebhooks
 );
 
-app.use(
-  cors({
-    origin: ["https://cynergy-self.vercel.app/"],  
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true
-  })
-)
+app.use(cors()) // Enable CORS for all routes
 
 // Middleware to parse JSON bodies
 app.use(express.json()) 
