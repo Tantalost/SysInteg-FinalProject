@@ -20,29 +20,37 @@ export const stripeWebhooks = async (request, response) => {
         return response.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    // 3. Handle the Event
-    if (event.type === 'checkout.session.completed') {
-        const session = event.data.object;
+    // 3. Handle the Event: Now listening for payment_intent.succeeded
+    // This event confirms the actual funds capture.
+    if (event.type === 'payment_intent.succeeded') {
+        // The event object is now a PaymentIntent (renamed from 'session' to 'intent')
+        const intent = event.data.object; 
 
-        // 4. Retrieve the bookingId we stored in Step 1
-        const bookingId = session.metadata?.bookingId;
+        // 4. Retrieve the bookingId from the PaymentIntent's metadata
+        // NOTE: The bookingId MUST be passed into the PaymentIntent's metadata
+        // during the initial Checkout Session creation for this to work.
+        const bookingId = intent.metadata?.bookingId; 
+        
         if (bookingId) {
             try {
                 await Booking.findByIdAndUpdate(bookingId, { 
                     isPaid: true, 
                     paymentMethod: "Stripe",
-                    paymentId: session.payment_intent 
+                    // The Payment Intent ID is now the ID of the object itself
+                    paymentId: intent.id 
                 });
-                console.log(`✅ Booking ${bookingId} marked as paid.`);
+                console.log(`✅ Booking ${bookingId} marked as paid using Payment Intent: ${intent.id}`);
             } catch (error) {
                 console.error('Error updating booking in DB:', error);
                 return response.status(500).json({ error: 'Database update failed' });
             }
         } else {
-            console.error('❌ No bookingId found in session metadata');
+            console.error('❌ No bookingId found in Payment Intent metadata');
         }
     } else {
         console.log(`Unhandled event type: ${event.type}`);
     }
+    
+    // Return a 200 response to Stripe to acknowledge receipt of the event
     response.json({ received: true });
 };
