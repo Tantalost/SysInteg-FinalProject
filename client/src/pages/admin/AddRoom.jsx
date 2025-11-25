@@ -1,72 +1,120 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import Title from '../../components/Title'
 import { assets } from '../../assets/assets'
 import { useAppContext } from '../../context/AppContext'
 import { toast } from 'react-hot-toast'
 import { FaTimes } from 'react-icons/fa'
 
+const AMENITY_OPTIONS = [
+  'Free Wifi',
+  'Air Conditioning',
+  'Room Service',
+  'Charging Station (USB-C / Fast Charge)',
+  'Private Bathroom Access',
+  'CCTV Security / Smart Lock',
+  'Mini Bar',
+  'Customizable Lighting',
+  '24/7 Support Staff',
+]
+
+const createAmenityState = () =>
+  AMENITY_OPTIONS.reduce((acc, amenity) => {
+    acc[amenity] = false
+    return acc
+  }, {})
+
+const createImageState = () => ({ 1: null, 2: null, 3: null, 4: null })
+
+const createInitialInputs = () => ({
+  name: '',
+  roomType: '',
+  pricePerHour: '',
+  amenities: createAmenityState(),
+})
+
 const AddRoom = () => {
   const { axios, getToken } = useAppContext()
 
-  const [images, setImages] = useState({ 1: null, 2: null, 3: null, 4: null })
-  const [inputs, setInputs] = useState({
-    name: '',
-    roomType: '',
-    pricePerHour: '',
-    amenities: {
-      'Free Wifi': false,
-      'Air Conditioning': false,
-      'Room Service': false,
-      'Charging Station (USB-C / Fast Charge)': false,
-      'Private Bathroom Access': false,
-      'CCTV Security / Smart Lock': false,
-      'Mini Bar': false,
-      'Customizable Lighting': false,
-      '24/7 Support Staff': false,
-    }
-  })
+  const [images, setImages] = useState(createImageState)
+  const [inputs, setInputs] = useState(createInitialInputs)
   const [loading, setLoading] = useState(false)
+
+  const selectedAmenities = useMemo(
+    () => Object.entries(inputs.amenities)
+      .filter(([, active]) => active)
+      .map(([amenity]) => amenity),
+    [inputs.amenities]
+  )
+
+  const selectedImages = useMemo(
+    () => Object.values(images).filter(Boolean),
+    [images]
+  )
+
+  const handleInputChange = (field, value) => {
+    setInputs(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleImageChange = (slot, file) => {
+    setImages(prev => ({ ...prev, [slot]: file || null }))
+  }
+
+  const toggleAmenity = (amenity) => {
+    setInputs(prev => ({
+      ...prev,
+      amenities: { ...prev.amenities, [amenity]: !prev.amenities[amenity] }
+    }))
+  }
 
   const onSubmitHandler = async (e) => {
     e.preventDefault()
-    if (!inputs.name || !inputs.roomType || !inputs.pricePerHour || !Object.values(images).some(img => img)) {
-      toast.error('Please fill in all fields and upload at least one image.')
+    if (!inputs.name || !inputs.roomType || !inputs.pricePerHour) {
+      toast.error('Please fill in all fields.')
       return
     }
+
+    if (!selectedImages.length) {
+      toast.error('Upload at least one room image.')
+      return
+    }
+
     setLoading(true)
     try {
+      const token = await getToken()
+      if (!token) {
+        toast.error('You must be signed in to add a room.')
+        return
+      }
+
       const formData = new FormData()
-      formData.append('name', inputs.name)
+      formData.append('name', inputs.name.trim())
       formData.append('roomType', inputs.roomType)
       formData.append('pricePerHour', inputs.pricePerHour)
-      const amenities = Object.keys(inputs.amenities).filter(a => inputs.amenities[a])
-      formData.append('amenities', JSON.stringify(amenities))
-      Object.keys(images).forEach(key => images[key] && formData.append('images', images[key]))
+      formData.append('amenities', JSON.stringify(selectedAmenities))
+      selectedImages.forEach(file => formData.append('images', file))
 
-      const { data } = await axios.post('/api/properties/', formData, {
-        headers: { Authorization: `Bearer ${await getToken()}` }
+      const { data } = await axios.post('/api/properties', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        }
       })
 
       if (data.success) {
         toast.success('Room added successfully')
-        setInputs({
-          name: '',
-          roomType: '',
-          pricePerHour: '',
-          amenities: Object.fromEntries(Object.keys(inputs.amenities).map(a => [a, false]))
-        })
-        setImages({ 1: null, 2: null, 3: null, 4: null })
-      } else toast.error(data.message)
+        setInputs(createInitialInputs())
+        setImages(createImageState())
+      } else {
+        toast.error(data.message || 'Failed to add room')
+      }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.response?.data?.message || error.message)
     } finally {
       setLoading(false)
     }
   }
 
-  const removeImage = (key) => {
-    setImages({ ...images, [key]: null })
-  }
+  const removeImage = (key) => handleImageChange(key, null)
 
   return (
     <form
@@ -92,7 +140,7 @@ const AddRoom = () => {
                   accept="image/*"
                   id={`roomImage${key}`}
                   hidden
-                  onChange={e => setImages({ ...images, [key]: e.target.files[0] })}
+                  onChange={e => handleImageChange(key, e.target.files?.[0] || null)}
                 />
               </label>
               {images[key] && (
@@ -118,7 +166,7 @@ const AddRoom = () => {
             <input
               type="text"
               value={inputs.name}
-              onChange={e => setInputs({ ...inputs, name: e.target.value })}
+              onChange={e => handleInputChange('name', e.target.value)}
               className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'
               required
             />
@@ -129,7 +177,7 @@ const AddRoom = () => {
             <p className='text-gray-800 mt-4'>Room Type</p>
             <select
               value={inputs.roomType}
-              onChange={e => setInputs({ ...inputs, roomType: e.target.value })}
+              onChange={e => handleInputChange('roomType', e.target.value)}
               className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'
               required
             >
@@ -150,7 +198,7 @@ const AddRoom = () => {
             type="number"
             className='border border-gray-300 mt-1 rounded p-2 w-24'
             value={inputs.pricePerHour}
-            onChange={e => setInputs({ ...inputs, pricePerHour: Number(e.target.value) })}
+            onChange={e => handleInputChange('pricePerHour', e.target.value)}
             required
           />
         </div>
@@ -165,7 +213,7 @@ const AddRoom = () => {
             <button
               type="button"
               key={index}
-              onClick={() => setInputs({ ...inputs, amenities: { ...inputs.amenities, [amenity]: !inputs.amenities[amenity] } })}
+              onClick={() => toggleAmenity(amenity)}
               className={`px-4 py-2 rounded-full border transition ${
                 inputs.amenities[amenity]
                   ? 'bg-primary text-white border-primary'
