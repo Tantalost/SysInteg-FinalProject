@@ -7,6 +7,7 @@ const Hero = () => {
 
     const { getToken, axios, setSearchedRoomTypes} = useAppContext();
     const [roomTypes, setRoomTypes] = useState([])
+    const [selectedRoomType, setSelectedRoomType] = useState('')
     const navigate = useNavigate();
 
 
@@ -23,8 +24,18 @@ const Hero = () => {
                         <img src={assets.calendarIcon} alt="calendarIcon" className='h-4' />
                         <label htmlFor="roomTypeInput">Room Type</label>
                     </div>
-                    <select list='roomType' id="roomTypeInput" className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none" placeholder="Select a room" required >
-                        <option value="" disabled selected> Select a room</option>
+                    <select
+                        list='roomType'
+                        id="roomTypeInput"
+                        className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none"
+                        placeholder="Select a room"
+                        required
+                        value={selectedRoomType}
+                        onChange={(e) => setSelectedRoomType(e.target.value)}
+                    >
+                        <option value="" disabled>
+                            Select a room
+                        </option>
                         {roomTypes.map((type, index) => (
                             <option key={index} value={type}>{type}</option>
                         ))}

@@ -17,13 +17,22 @@ const app = express();
 connectDB()
 connectCloudinary()
 
+const corsOptions = {
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+const corsMiddleware = cors(corsOptions);
+
 app.post(
   '/api/bookings/webhook', 
   express.raw({ type: 'application/json' }), 
   stripeWebhooks
 );
 
-app.use(cors()) // Enable CORS for all routes
+app.use(corsMiddleware) // Enable CORS for all routes
 
 // Middleware to parse JSON bodies
 app.use(express.json()) 
