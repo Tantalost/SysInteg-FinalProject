@@ -131,6 +131,7 @@ const AddRoom = () => {
       const { data } = await axios.post('/api/properties', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
         },
         withCredentials: true,
       })
