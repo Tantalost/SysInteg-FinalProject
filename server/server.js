@@ -1,11 +1,10 @@
-// server.js
 import express from 'express';
 import 'dotenv/config.js';
 import cors from 'cors';
 import connectDB from './configs/db.js';
 import connectCloudinary from './configs/cloudinary.js';
-import { clerkMiddleware } from '@clerk/express';
 
+import { clerkMiddleware } from '@clerk/express';
 import clearkWebhooks from './controllers/clerkWebhooks.js';
 import { stripeWebhooks } from './controllers/stripeWebhooks.js';
 
@@ -16,52 +15,35 @@ import bookingRouter from './routes/bookingRoutes.js';
 
 const app = express();
 
-/* ---------------------------
-    INITIALIZE SERVICES
-----------------------------*/
+/* INIT */
 connectDB();
 connectCloudinary();
 
-/* ---------------------------
-    CORS CONFIG (IMPORTANT)
-----------------------------*/
+/* CORS */
 const corsOptions = {
   origin: [
-    "https://cynergy-self.vercel.app", // your frontend
-    "http://localhost:5173"            // local dev
+    "https://cynergy-self.vercel.app",
+    "http://localhost:5173"
   ],
   credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
 };
-
-app.use(cors(corsOptions));      // CORS MUST COME FIRST
+app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-/* ---------------------------
-    JSON BODY PARSER
-----------------------------*/
+/* JSON Parser */
 app.use(express.json());
 
-/* ---------------------------
-    CLERK AUTH MIDDLEWARE
-----------------------------*/
+/* Clerk */
 app.use(clerkMiddleware());
 
-/* ---------------------------
-    STRIPE WEBHOOK (RAW BODY)
-    MUST COME AFTER CORS 
-    AND BEFORE express.json overrides.
-----------------------------*/
+/* Stripe Webhook */
 app.post(
   "/api/bookings/webhook",
   express.raw({ type: "application/json" }),
   stripeWebhooks
 );
 
-/* ---------------------------
-    NORMAL API ROUTES
-----------------------------*/
+/* ROUTES */
 app.get("/", (req, res) => res.send("API is working"));
 
 app.use("/api/clerk", clearkWebhooks);
@@ -70,10 +52,7 @@ app.use("/api/rooms", roomRouter);
 app.use("/api/properties", propertyRouter);
 app.use("/api/bookings", bookingRouter);
 
-/* ---------------------------
-    START SERVER
-----------------------------*/
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+/* ⛔ DO NOT USE app.listen() ON VERCEL */
+/* Instead export the app */
 
-export default app;  // required for Vercel
+export default app;
