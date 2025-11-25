@@ -9,21 +9,17 @@ import roomRouter from './routes/roomRoutes.js';
 import connectCloudinary from './configs/cloudinary.js';
 import propertyRouter from './routes/propertyRoutes.js';
 import bookingRouter from './routes/bookingRoutes.js';
-import { stripeWebhookHandler } from './controllers/stripeWebhooks.js';
+import { stripeWebhooks } from './controllers/stripeWebhooks.js';
 
 
 connectDB()
 connectCloudinary()
 
+// API for Stripe Webhooks
+app.post('/api/stripe', express.raw({type: "application/json"}), stripeWebhooks);
+
 const app = express();
 app.use(cors()) // Enable CORS for all routes
-
-// API for Stripe Webhooks
-app.post(
-    "/api/stripe/webhook",
-    express.raw({ type: "application/json" }),
-    stripeWebhookHandler
-);
 
 // Middleware to parse JSON bodies
 app.use(express.json()) 
@@ -31,8 +27,6 @@ app.use(clerkMiddleware())
 
 // API for Webhooks
 app.use("/api/clerk", clearkWebhooks);
-app.use("/api/stripe", stripeRoutes);
-
 
 app.get('/', (req, res)=> res.send("API is working"))
 app.use('/api/user', userRouter)
