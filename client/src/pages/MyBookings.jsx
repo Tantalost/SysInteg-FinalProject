@@ -149,12 +149,14 @@ const MyBookings = () => {
                                         </button>
                                     )}
 
-                                    <button
-                                        onClick={() => handleCancelBooking(booking._id)}
-                                        className="px-4 py-1.5 text-xs font-semibold rounded-full bg-red-500 text-white hover:bg-red-600 transition-all cursor-pointer"
-                                    >
-                                        Cancel Booking
-                                    </button>
+                                    {!booking.isPaid && (
+                                        <button
+                                            onClick={() => handleCancelBooking(booking._id)}
+                                            className="px-4 py-1.5 text-xs font-semibold rounded-full bg-red-500 text-white hover:bg-red-600 transition-all cursor-pointer"
+                                        >
+                                            Cancel Booking
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         );
