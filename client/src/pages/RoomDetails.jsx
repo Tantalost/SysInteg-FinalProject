@@ -228,13 +228,13 @@ const RoomDetails = () => {
                     <div className='flex gap-4 w-full md:w-1/3'>
                         <div className='flex flex-col w-1/2'>
                             <label className='font-medium text-gray-600 mb-2'>Duration (Hrs)</label>
-                            <input type="number" min="1" max="12"
+                            <input type="number" min="1" max="8"
                                 value={duration} onChange={(e) => setDuration(e.target.value)}
                                 className='w-full rounded-lg border border-gray-300 px-4 py-3 outline-orange-500' />
                         </div>
                         <div className='flex flex-col w-1/2'>
                             <label className='font-medium text-gray-600 mb-2'>Guests</label>
-                            <input type="number" min="1"
+                            <input type="number" min="1" max="5"
                                 value={guests} onChange={(e) => setGuests(e.target.value)}
                                 className='w-full rounded-lg border border-gray-300 px-4 py-3 outline-orange-500' />
                         </div>
