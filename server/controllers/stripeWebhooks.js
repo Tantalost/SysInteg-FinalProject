@@ -26,7 +26,6 @@ export const stripeWebhooks = async (request, response) => {
 
         // 4. Retrieve the bookingId we stored in Step 1
         const bookingId = session.metadata?.bookingId;
-
         if (bookingId) {
             try {
                 await Booking.findByIdAndUpdate(bookingId, { 
