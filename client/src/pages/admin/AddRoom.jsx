@@ -110,23 +110,51 @@ const AddRoom = () => {
       </div>
 
       <div className='w-full flex max-sm:flex-col sm:gap-4 mt-4'>
-        <div className='flex-1 max-2-48'>
-          <p className='text-gray-800 mt-4'>Room Type</p>
-          <select value={inputs.roomType} onChange={e => setInputs({ ...inputs, roomType: e.target.value })}
-            className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'>
-            <option value="">Select Room Type</option>
-            <option value="Gaming Room">Gaming Room</option>
-            <option value="KTV Room">KTV Room</option>
-            <option value="Movie Room">Movie Room</option>
-          </select>
-        </div>
-        <div>
-          <p className='mt-4 text-gray-800'>
-            Price <span className='text-xs'>/hour</span>
-          </p>
-          <input type="number" className='border border-gray-300 mt-1 rounded p-2 w-24' value={inputs.pricePerHour} onChange={e => setInputs({ ...inputs, pricePerHour: Number(e.target.value) })} />
-        </div>
-      </div>
+        {/* Room Name and Type Container */}
+        <div className='flex-1 flex max-sm:flex-col sm:gap-4'>
+          {/* Room Name Input */}
+          <div className='flex-1'>
+            <p className='text-gray-800 mt-4'>Room Name</p>
+            <input
+              type="text"
+              value={inputs.name}
+              onChange={e => setInputs({ ...inputs, name: e.target.value })}
+              className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'
+              required
+            />
+          </div>
+
+          {/* Room Type Select */}
+          <div className='flex-1'>
+            <p className='text-gray-800 mt-4'>Room Type</p>
+            <select
+              value={inputs.roomType}
+              onChange={e => setInputs({ ...inputs, roomType: e.target.value })}
+              className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'
+              required
+            >
+              <option value="">Select Room Type</option>
+              <option value="Gaming Room">Gaming Room</option>
+              <option value="KTV Room">KTV Room</option>
+              <option value="Movie Room">Movie Room</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Price Input */}
+        <div>
+          <p className='mt-4 text-gray-800'>
+            Price <span className='text-xs'>/hour</span>
+          </p>
+          <input
+            type="number"
+            className='border border-gray-300 mt-1 rounded p-2 w-24'
+            value={inputs.pricePerHour}
+            onChange={e => setInputs({ ...inputs, pricePerHour: Number(e.target.value) })}
+            required
+          />
+        </div>
+      </div>
 
 
       {/* Amenities */}
