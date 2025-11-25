@@ -300,6 +300,43 @@ export const getRoomBookings = async (req, res) => {
     }
 };
 
+export const cancelBooking = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.json({ success: false, message: "Booking id is required" });
+        }
+
+        if (!req.user?._id) {
+            return res.json({ success: false, message: "User authentication required" });
+        }
+
+        const booking = await Booking.findById(id);
+
+        if (!booking) {
+            return res.json({ success: false, message: "Booking not found" });
+        }
+
+        if (booking.user.toString() !== req.user._id.toString()) {
+            return res.json({ success: false, message: "You cannot cancel this booking" });
+        }
+
+        const now = new Date();
+        if (booking.checkInDate <= now) {
+            return res.json({ success: false, message: "Cannot cancel past or in-progress bookings" });
+        }
+
+        await Booking.findByIdAndDelete(id);
+
+        res.json({ success: true, message: "Booking cancelled" });
+
+    } catch (error) {
+        console.error("cancelBooking error:", error);
+        res.json({ success: false, message: "Failed to cancel booking" });
+    }
+};
+
 // Optional: Get all bookings for a specific room (GET /api/bookings/room/:roomId)
 export const getBookingsByRoom = async (req, res) => {
     try {
