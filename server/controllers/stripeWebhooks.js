@@ -1,35 +1,35 @@
 import Stripe from "stripe";
 import Booking from "../models/Booking.js";
 
-//API for stripe webhooks
+export const stripeWebhooks = async (req, res) => {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-export const stripeWebhooks = async (request, response) => {
-    // Stripe Gateway initialize
-    const stripeInstance = new stripeWebhooks(process.env.STRIPE_SECRET_KEY);
-    const sig = request.headers['stripe-signature'];
+    const sig = req.headers["stripe-signature"];
     let event;
 
     try {
-        event = stripeInstance.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
+        event = stripe.webhooks.constructEvent(
+            req.body,
+            sig,
+            process.env.STRIPE_WEBHOOK_SECRET
+        );
     } catch (error) {
-        response.status(400).send('Webhook Error: ${err.message}')
+        return res.status(400).send(`Webhook Error: ${error.message}`);
     }
 
-    //Handle the event
-    if (event.type === "payment_intent.succeeded") {
-        const paymentIntent = event.data.object;
-        const paymentIntentId = paymentIntent.id;
+    // ✔ Listen to checkout.session.completed — best event for metadata
+    if (event.type === "checkout.session.completed") {
+        const session = event.data.object;
 
-        //Get the session metadata
-        const session = await stripeInstance.checkout.sessions.list({
-            payment_intent: paymentIntentId,
+        const bookingId = session.metadata.bookingId;
+
+        await Booking.findByIdAndUpdate(bookingId, {
+            isPaid: true,
+            paymentMethod: "Stripe",
         });
 
-        const { bookingId } = session.data[0].metadata;
-        //Mark Payment as Paid
-        await Booking.findByIdAndUpdate(bookingId, { isPaid: true, paymentMethod: "Stripe" })
-    } else {
-        console.log("Unhandled event type:", event.type)
+        console.log("Booking marked as paid:", bookingId);
     }
-    response.json({ received: true });
-}
+
+    res.json({ received: true });
+};
