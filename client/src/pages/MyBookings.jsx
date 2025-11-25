@@ -44,6 +44,27 @@ const MyBookings = () => {
         }
     };
 
+    const handleCancelBooking = async (bookingId) => {
+        if (!window.confirm("Are you sure you want to cancel this booking?")) {
+            return;
+        }
+
+        try {
+            const { data } = await axios.delete(`/api/bookings/${bookingId}`, {
+                headers: { Authorization: `Bearer ${await getToken()}` },
+            });
+
+            if (data.success) {
+                setBookings((prev) => prev.filter((booking) => booking._id !== bookingId));
+                toast.success("Booking cancelled successfully.");
+            } else {
+                toast.error(data.message || "Unable to cancel booking.");
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
+
     useEffect(() => {
         if (user) getUserBookings();
     }, [user]);
@@ -109,7 +130,7 @@ const MyBookings = () => {
                                     </p>
                                 </div>
 
-                                <div className="flex items-center">
+                                <div className="flex flex-col items-start md:items-end gap-2 mt-4 md:mt-0 w-full md:w-auto">
                                     <span
                                         className={`px-3 py-1 rounded-full text-sm ${booking.isPaid
                                             ? "bg-green-100 text-green-800"
@@ -118,16 +139,23 @@ const MyBookings = () => {
                                     >
                                         {booking.isPaid ? "Paid" : "Pay at Location"}
                                     </span>
-                                </div>
 
-                                {!booking.isPaid && (
+                                    {!booking.isPaid && (
+                                        <button
+                                            onClick={() => handlePayment(booking._id)}
+                                            className="px-4 py-1.5 text-xs border border-gray-400 rounded-full hover:bg-gray-50 transition-all cursor-pointer"
+                                        >
+                                            Pay Now
+                                        </button>
+                                    )}
+
                                     <button
-                                        onClick={() => handlePayment(booking._id)}
-                                        className="px-4 py-1.5 mt-4 text-xs border border-gray-400 rounded-full hover:bg-gray-50 transition-all cursor-pointer"
+                                        onClick={() => handleCancelBooking(booking._id)}
+                                        className="px-4 py-1.5 text-xs font-semibold rounded-full bg-red-500 text-white hover:bg-red-600 transition-all cursor-pointer"
                                     >
-                                        Pay Now
+                                        Cancel Booking
                                     </button>
-                                )}
+                                </div>
                             </div>
                         );
                     })}
