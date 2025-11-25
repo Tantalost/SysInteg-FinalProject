@@ -17,6 +17,7 @@ import Archive from './pages/admin/Archive.jsx';
 import { Toaster } from 'react-hot-toast';
 import { useAppContext } from './context/AppContext.jsx';
 import Loader from './components/Loader.jsx';
+import PaymentSuccess from './pages/PaymentSuccess.jsx';
 
 const App = () => {
 
@@ -45,6 +46,7 @@ const App = () => {
           <Route path='/about' element={<About />} />
           <Route path='/rooms/:id' element={<RoomDetails />} />
           <Route path='/my-bookings' element={<MyBookings />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
            <Route path='/loader/:nextUrl' element={<Loader />} />
 
           <Route path='/admin' element={<Layout />}>

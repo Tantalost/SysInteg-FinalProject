@@ -12,6 +12,8 @@ import bookingRouter from './routes/bookingRoutes.js';
 import { stripeWebhooks } from './controllers/stripeWebhooks.js';
 
 
+const app = express();
+
 connectDB()
 connectCloudinary()
 
@@ -21,7 +23,6 @@ app.post(
   stripeWebhooks
 );
 
-const app = express();
 app.use(cors()) // Enable CORS for all routes
 
 // Middleware to parse JSON bodies
