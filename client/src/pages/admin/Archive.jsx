@@ -67,6 +67,7 @@ const Archive = () => {
             <table className='min-w-full divide-y divide-gray-200'>
                 <thead className='bg-gray-100 sticky top-0 shadow-sm'>
                     <tr>
+                        <th className='py-4 px-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider'>Room Name</th>
                         <th className='py-4 px-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider'>Room Type</th>
                         <th className='py-4 px-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider max-md:hidden'>Amenities</th>
                         <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider'>Price / hour</th> 

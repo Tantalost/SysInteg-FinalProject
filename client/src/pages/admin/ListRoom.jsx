@@ -198,6 +198,7 @@ const ListRoom = () => {
                 {/* Table Header: Sticky and Cleaner */}
                 <thead className='bg-gray-100 sticky top-0 shadow-sm'>
                     <tr>
+                        <th className='py-4 px-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider'>Room Name</th>
                         <th className='py-4 px-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider'>Room Type</th>
                         {/* Renamed Facility to Amenities for clarity, hidden on small screens */}
                         <th className='py-4 px-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider max-md:hidden'>Amenities</th>
