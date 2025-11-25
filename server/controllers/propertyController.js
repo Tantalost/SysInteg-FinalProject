@@ -8,7 +8,6 @@ export const createProperty = async (req, res) => {
     try {
         const { name ,roomType, pricePerHour, amenities } = req.body;
 
-        // Debug: Check if files arrived
         console.log("Files received:", req.files); 
 
         if (!req.files || req.files.length === 0) {
@@ -18,9 +17,7 @@ export const createProperty = async (req, res) => {
         const room = await Room.findOne({ admin: req.auth().userId });
         if (!room) return res.json({ success: false, message: 'Room/Host profile not found' });
 
-        // 2. Upload images to Cloudinary
         const uploadedImages = req.files.map(async (file) => {
-            // SAFETY CHECK: Ensure path exists
             if(!file.path) throw new Error("File path is missing. Check uploadMiddleware.");
             
             const response = await cloudinary.uploader.upload(file.path, {
@@ -31,7 +28,6 @@ export const createProperty = async (req, res) => {
 
         const images = await Promise.all(uploadedImages)
 
-        // 3. Create the new Property
         const newProperty = await Property.create({
             name,
             room: room._id,     

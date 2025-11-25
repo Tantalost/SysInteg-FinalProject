@@ -108,6 +108,7 @@ const AddRoom = () => {
         toast.error(data.message || 'Failed to add room')
       }
     } catch (error) {
+      console.log("AXIOS ERROR:", error);
       toast.error(error.response?.data?.message || error.message)
     } finally {
       setLoading(false)
