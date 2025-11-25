@@ -103,3 +103,72 @@ export const togglePropertyAvailability = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
+
+export const updateProperty = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { roomType, pricePerHour, amenities } = req.body;
+
+        const roomData = await Room.findOne({ admin: req.auth().userId });
+        if (!roomData) {
+            return res.json({ success: false, message: 'Admin room not found' });
+        }
+
+        const propertyData = await Property.findOne({ _id: id, room: roomData._id.toString() });
+        if (!propertyData) {
+            return res.json({ success: false, message: 'Property not found' });
+        }
+
+        if (roomType) {
+            propertyData.roomType = roomType;
+        }
+
+        if (pricePerHour !== undefined) {
+            propertyData.pricePerHour = Number(pricePerHour);
+        }
+
+        if (amenities !== undefined) {
+            let nextAmenities = amenities;
+            if (typeof amenities === 'string') {
+                nextAmenities = JSON.parse(amenities || '[]');
+            }
+
+            if (Array.isArray(nextAmenities)) {
+                propertyData.amenities = nextAmenities;
+            }
+        }
+
+        await propertyData.save();
+
+        res.json({ success: true, message: 'Property updated successfully', property: propertyData });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+export const deleteProperty = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const roomData = await Room.findOne({ admin: req.auth().userId });
+
+        if (!roomData) {
+            return res.json({ success: false, message: 'Admin room not found' });
+        }
+
+        const propertyData = await Property.findOne({ _id: id, room: roomData._id.toString() });
+
+        if (!propertyData) {
+            return res.json({ success: false, message: 'Property not found' });
+        }
+
+        await Property.findByIdAndDelete(id);
+        roomData.properties = roomData.properties.filter(
+            (propertyId) => propertyId.toString() !== id
+        );
+        await roomData.save();
+
+        res.json({ success: true, message: 'Property deleted successfully' });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}

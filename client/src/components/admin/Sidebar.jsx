@@ -7,6 +7,7 @@ const Sidebar = () => {
         {name: "Dashboard", path: "/admin", icon: assets.dashboardIcon},
         {name: "Add Room", path: "/admin/add-room", icon: assets.addIcon},
         {name: "List Room", path: "/admin/list-room", icon: assets.listIcon},
+        {name: "Archive", path: "/admin/archive", icon: assets.listIcon},
     ]
 
   return (
