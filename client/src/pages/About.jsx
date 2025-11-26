@@ -6,27 +6,37 @@ const About = () => {
         {
             name: "John Lloyd Climaco",
             role: "Full Stack Developer",
-            description: "Skilled in building and maintaining both front-end and back-end applications, capable of delivering complete end-to-end web or mobile solutions."
+            description: "Skilled in building and maintaining both front-end and back-end applications, capable of delivering complete end-to-end web or mobile solutions.",
+            image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80",
+            hoverImage: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=300&q=80"
         },
         {
             name: "Stephanie Villamor",
             role: "UI/UX Designer",
-            description: "Designs intuitive and engaging user interfaces while ensuring a seamless user experience across web and mobile applications."
+            description: "Designs intuitive and engaging user interfaces while ensuring a seamless user experience across web and mobile applications.",
+            image: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=300&q=80",
+            hoverImage: "https://images.unsplash.com/photo-1525130413817-d45c1d127c42?auto=format&fit=crop&w=300&q=80"
         },
         {
             name: "Vennashier Malali",
             role: "Quality Assurance Engineer",
-            description: "Tests, monitors, and ensures software quality by identifying bugs and verifying functionality to deliver reliable, high-performing applications."
+            description: "Tests, monitors, and ensures software quality by identifying bugs and verifying functionality to deliver reliable, high-performing applications.",
+            image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80",
+            hoverImage: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=300&q=80"
         },
         {
             name: "Justin James Alviar",
             role: "Project Manager",
-            description: "Plans, executes, and oversees projects, coordinating teams and resources to ensure timely delivery and alignment with business objectives."
+            description: "Plans, executes, and oversees projects, coordinating teams and resources to ensure timely delivery and alignment with business objectives.",
+            image: "https://images.unsplash.com/photo-1528892952291-009c663ce843?auto=format&fit=crop&w=300&q=80",
+            hoverImage: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80"
         },
         {
             name: "Jayna Sahibul",
             role: "Business Analyst",
-            description: "Analyzes business needs, gathers requirements, and translates them into actionable solutions to drive efficiency and support decision-making."
+            description: "Analyzes business needs, gathers requirements, and translates them into actionable solutions to drive efficiency and support decision-making.",
+            image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80",
+            hoverImage: "https://images.unsplash.com/photo-1525130413817-d45c1d127c42?auto=format&fit=crop&w=300&q=80"
         }
     ];
 
@@ -78,13 +88,22 @@ const About = () => {
                     {developers.map((developer, index) => (
                         <div 
                             key={index}
-                            className='bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-300'
+                            className='group bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300'
                         >
                             <div className='flex flex-col items-center text-center'>
-                                <div className='w-20 h-20 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center mb-4'>
-                                    <span className='text-white text-2xl font-semibold'>
-                                        {developer.name.split(' ').map(n => n[0]).join('')}
-                                    </span>
+                                <div className='relative w-24 h-24 mb-4'>
+                                    <img 
+                                        src={developer.image} 
+                                        alt={developer.name} 
+                                        className='w-full h-full object-cover rounded-full border-4 border-white shadow-lg transition-opacity duration-300 group-hover:opacity-0'
+                                        loading="lazy"
+                                    />
+                                    <img 
+                                        src={developer.hoverImage} 
+                                        alt={`${developer.name} fun`} 
+                                        className='absolute inset-0 w-full h-full object-cover rounded-full border-4 border-white shadow-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100'
+                                        loading="lazy"
+                                    />
                                 </div>
                                 <h3 className='text-xl font-semibold text-gray-800 mb-1'>
                                     {developer.name}
