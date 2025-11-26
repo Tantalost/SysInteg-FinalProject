@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import { toast } from "react-hot-toast";
+import { FaCalendarAlt, FaClock, FaUsers, FaTag } from 'react-icons/fa'; // FaDollarSign removed from import
+import { IoIosCloseCircle } from 'react-icons/io';
 
 const MyBookings = () => {
     const { user, axios, getToken, currency } = useAppContext();
@@ -15,7 +17,9 @@ const MyBookings = () => {
             });
 
             if (data.success) {
-                setBookings(data.bookings);
+                // Sort bookings by check-in date, newest first
+                const sortedBookings = data.bookings.sort((a, b) => new Date(b.checkInDate) - new Date(a.checkInDate));
+                setBookings(sortedBookings);
             } else {
                 toast.error(data.message);
             }
@@ -69,122 +73,140 @@ const MyBookings = () => {
         if (user) getUserBookings();
     }, [user]);
 
+    const formatTime = (dateString) => new Date(dateString).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const calculateDuration = (checkIn, checkOut) => {
+        const start = new Date(checkIn);
+        const end = new Date(checkOut);
+        const hours = Math.round((end - start) / (1000 * 60 * 60));
+        return `${hours} hour${hours !== 1 ? 's' : ''}`;
+    };
+
     const fallbackImage =
         "https://via.placeholder.com/400x300?text=No+Image+Available";
 
     return (
-        <div className="min-h-screen flex flex-col">
-            <main className="flex-1 container mx-auto px-4 py-20 max-w-5xl">
-                <h1 className="text-3xl font-bold text-gray-800 mb-8">
-                    My Bookings
+        <div className="min-h-screen flex flex-col bg-gray-50">
+            <main className="flex-1 container mx-auto px-4 pt-28 pb-12 max-w-5xl"> 
+                
+                <h1 className="text-4xl font-extrabold text-gray-900 mb-8">
+                    My Bookings 🗓️
                 </h1>
 
                 {isLoading && (
-                    <div className="space-y-4 animate-pulse">
+                    <div className="space-y-6">
                         {[1, 2, 3].map((i) => (
-                            <div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
+                            <div key={i} className="flex h-40 bg-white rounded-xl shadow-lg animate-pulse p-4">
+                                <div className="w-32 h-32 bg-gray-200 rounded-lg mr-4"></div>
+                                <div className="flex-1 space-y-3">
+                                    <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+                                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                                    <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                                </div>
+                            </div>
                         ))}
                     </div>
                 )}
 
                 {!isLoading && bookings.length === 0 && (
-                    <div className="text-center py-20 text-gray-500">
-                        <p className="text-lg">No bookings yet.</p>
+                    <div className="text-center py-20 bg-white rounded-xl shadow-lg mt-8 border border-gray-100">
+                        <p className="text-xl font-medium text-gray-700">You don't have any active bookings.</p>
+                        <p className="text-gray-500 mt-2">Start a new reservation to see it here.</p>
                     </div>
                 )}
 
                 <div className="grid gap-6">
                     {bookings.map((booking, index) => {
                         const property = booking.property || {};
-                        const room = booking.room || {};
+                        const checkInDate = formatDate(booking.checkInDate);
+                        const checkInTime = formatTime(booking.checkInDate);
+                        const checkOutTime = formatTime(booking.checkOutDate);
+                        const duration = calculateDuration(booking.checkInDate, booking.checkOutDate);
+                        const isPaid = booking.isPaid;
 
                         return (
                             <div
                                 key={index}
-                                className="flex flex-col md:flex-row items-start gap-5 p-5 rounded-xl border bg-white shadow-md hover:shadow-lg transition-all"
+                                className="flex flex-col lg:flex-row items-start gap-6 p-6 rounded-xl border border-gray-100 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300"
                             >
-                                <div className="w-full md:w-48 h-36 rounded-lg overflow-hidden bg-gray-200">
-                                    <img
-                                        src={property.images?.[0] || fallbackImage}
-                                        alt={property.name || "Property"}
-                                        className="w-full h-full object-cover"
-                                    />
+                                {/* Image and Quick ID */}
+                                <div className="flex flex-col items-center w-full lg:w-48 flex-shrink-0">
+                                    <div className="w-full h-36 rounded-lg overflow-hidden bg-gray-200 border border-gray-300">
+                                        <img
+                                            src={property.images?.[0] || fallbackImage}
+                                            alt={property.name || "Property"}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="mt-2 text-sm text-gray-500 font-mono">
+                                        ID: <span className="font-semibold text-gray-700">{booking.referenceId || booking._id.slice(-8)}</span>
+                                    </div>
                                 </div>
 
-                                <div className="flex-1">
-                                    <h2 className="text-xl font-semibold">
-                                        {booking.property?.roomType || booking.property?.name || "Room"}
-                                    </h2>
+                                {/* Booking Details Grid */}
+                                <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 gap-y-3 gap-x-6 w-full">
+                                    <div className="sm:col-span-3">
+                                        <h2 className="text-2xl font-bold text-gray-900 leading-tight">
+                                            {property.roomType || property.name || "Reserved Room"}
+                                        </h2>
+                                    </div>
 
-                                    <p className="text-gray-600 mt-1">
-                                        Booking ID: <span className="font-mono text-sm">{booking.referenceId || booking._id.slice(-8)}</span>
-                                    </p>
+                                    <div className="text-sm">
+                                        <p className="font-medium text-gray-600 flex items-center gap-2"><FaCalendarAlt className="text-red-500" /> Date</p>
+                                        <p className="font-semibold text-gray-800">{checkInDate}</p>
+                                    </div>
+                                    
+                                    <div className="text-sm">
+                                        <p className="font-medium text-gray-600 flex items-center gap-2"><FaClock className="text-red-500" /> Time</p>
+                                        <p className="font-semibold text-gray-800">{checkInTime} - {checkOutTime}</p>
+                                    </div>
 
-                                    <p className="text-sm text-gray-500 mt-2">
-                                        <span className="font-medium">Date:</span> {new Date(booking.checkInDate).toLocaleDateString('en-US', { 
-                                            month: 'short', 
-                                            day: 'numeric', 
-                                            year: 'numeric' 
-                                        })}
-                                    </p>
+                                    <div className="text-sm">
+                                        <p className="font-medium text-gray-600 flex items-center gap-2"><FaClock className="text-red-500" /> Duration</p>
+                                        <p className="font-semibold text-gray-800">{duration}</p>
+                                    </div>
 
-                                    <p className="text-sm text-gray-500">
-                                        <span className="font-medium">Time:</span> {new Date(booking.checkInDate).toLocaleTimeString('en-US', { 
-                                            hour: '2-digit', 
-                                            minute: '2-digit',
-                                            hour12: true 
-                                        })} - {new Date(booking.checkOutDate).toLocaleTimeString('en-US', { 
-                                            hour: '2-digit', 
-                                            minute: '2-digit',
-                                            hour12: true 
-                                        })}
-                                    </p>
+                                    <div className="text-sm">
+                                        <p className="font-medium text-gray-600 flex items-center gap-2"><FaUsers className="text-red-500" /> Guests</p>
+                                        <p className="font-semibold text-gray-800">{booking.guests || 'N/A'}</p>
+                                    </div>
 
-                                    <p className="text-sm text-gray-500 mt-1">
-                                        <span className="font-medium">Duration:</span> {(() => {
-                                            const start = new Date(booking.checkInDate)
-                                            const end = new Date(booking.checkOutDate)
-                                            const hours = Math.round((end - start) / (1000 * 60 * 60))
-                                            return `${hours} hour${hours !== 1 ? 's' : ''}`
-                                        })()}
-                                    </p>
-
-                                    <p className="text-sm text-gray-500">
-                                        <span className="font-medium">Guests:</span> {booking.guests || 'N/A'}
-                                    </p>
-
-                                    <p className="font-bold mt-3 text-lg">
-                                        Total: {currency}{booking.totalPrice || 0}
-                                    </p>
+                                    <div className="text-sm">
+                                        <p className="font-medium text-gray-600 flex items-center gap-2"><FaTag className="text-red-500" /> Status</p>
+                                        <span className={`px-3 py-1 text-xs font-bold rounded-full ${isPaid ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
+                                            {isPaid ? "Paid" : "Pending Payment"}
+                                        </span>
+                                    </div>
                                 </div>
 
-                                <div className="flex flex-col items-start md:items-end gap-2 mt-4 md:mt-0 w-full md:w-auto">
-                                    <span
-                                        className={`px-3 py-1 rounded-full text-sm ${booking.isPaid
-                                            ? "bg-green-100 text-green-800"
-                                            : "bg-yellow-100 text-yellow-800"
-                                            }`}
-                                    >
-                                        {booking.isPaid ? "Paid" : "Pay at Location"}
-                                    </span>
+                                {/* Total and Actions */}
+                                <div className="flex flex-col items-start lg:items-end justify-between gap-4 w-full lg:w-48 flex-shrink-0 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-gray-100">
+                                    <div className="w-full text-left lg:text-right">
+                                        {/* Updated line without the dollar sign icon */}
+                                        <p className="text-sm text-gray-600 flex items-center gap-2 lg:justify-end">Total Amount</p>
+                                        <p className="text-2xl font-extrabold text-red-600 mt-1">{currency}{booking.totalPrice || 0}</p>
+                                    </div>
 
-                                    {!booking.isPaid && (
-                                        <button
-                                            onClick={() => handlePayment(booking._id)}
-                                            className="px-4 py-1.5 text-xs border border-gray-400 rounded-full hover:bg-gray-50 transition-all cursor-pointer"
-                                        >
-                                            Pay Now
-                                        </button>
-                                    )}
+                                    <div className="flex flex-col space-y-2 w-full">
+                                        {!isPaid && (
+                                            <button
+                                                onClick={() => handlePayment(booking._id)}
+                                                className="w-full px-4 py-2 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors shadow-md"
+                                            >
+                                                Pay Now
+                                            </button>
+                                        )}
 
-                                    {!booking.isPaid && (
-                                        <button
-                                            onClick={() => handleCancelBooking(booking._id)}
-                                            className="px-4 py-1.5 text-xs font-semibold rounded-full bg-red-500 text-white hover:bg-red-600 transition-all cursor-pointer"
-                                        >
-                                            Cancel Booking
-                                        </button>
-                                    )}
+                                        {!isPaid && (
+                                            <button
+                                                onClick={() => handleCancelBooking(booking._id)}
+                                                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors border border-gray-300"
+                                            >
+                                                <IoIosCloseCircle className="text-lg" />
+                                                Cancel Booking
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         );
