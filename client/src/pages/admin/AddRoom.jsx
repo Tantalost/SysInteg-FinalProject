@@ -17,6 +17,8 @@ const AMENITY_OPTIONS = [
   '24/7 Support Staff',
 ]
 
+const currency = "₱";
+
 const MAX_IMAGES = 4
 
 const createAmenityState = () =>
