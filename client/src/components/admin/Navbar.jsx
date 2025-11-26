@@ -28,7 +28,7 @@ const Navbar = () => {
           <img 
             src={logo} 
             alt="Company Logo" 
-            className={`w-auto transition-all duration-300 "h-40 filter invert" `}
+            className='w-auto transition-all duration-300 h-40 filter invert'
           />
         </Link>
 
