@@ -28,7 +28,7 @@ const Navbar = () => {
           <img 
             src={logo} 
             alt="Company Logo" 
-            className={`w-auto transition-all duration-300 ${isScrolled ? "h-40 filter invert" : "h-40"}`}
+            className={`w-auto transition-all duration-300 "h-40 filter invert" `}
           />
         </Link>
 
