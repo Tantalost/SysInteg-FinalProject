@@ -11,8 +11,7 @@ const Dashboard = () => {
         bookings: [],
         totalBookings: 0,
         totalRevenue: 0,
-        // Assuming we can fetch or calculate total users
-        totalUsers: 7, 
+        totalUsers: 0, 
     });
     const [isLoading, setIsLoading] = useState(true);
 
@@ -32,24 +31,46 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
         setIsLoading(true);
         try {
-            const { data } = await axios.get('/api/bookings/room', {
-                headers: { Authorization: `Bearer ${await getToken()}` }
+            const token = await getToken();
+            
+            // Fetch bookings
+            const bookingsResponse = await axios.get('/api/bookings/room', {
+                headers: { Authorization: `Bearer ${token}` }
             });
 
-            if (data.success) {
-                // Merge default state with fetched data
+            // Fetch total users count
+            const usersResponse = await axios.get('/api/user/count', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (bookingsResponse.data.success) {
+                const totalUsers = usersResponse.data.success ? (usersResponse.data.count || 0) : 0;
+                
                 setDashboardData(prev => ({
                     ...prev,
-                    ...data.dashboardData, 
-                    // Add totalUsers property if your API provides it
-                    // totalUsers: data.dashboardData.totalUsers, 
+                    ...bookingsResponse.data.dashboardData,
+                    totalUsers
                 }));
             } else {
-                toast.error(data.message);
+                toast.error(bookingsResponse.data.message);
             }
         } catch (error) {
             console.error(error);
-            toast.error(error.response?.data?.message || error.message || "Failed to fetch dashboard data");
+            // If users endpoint doesn't exist, just use bookings data
+            try {
+                const { data } = await axios.get('/api/bookings/room', {
+                    headers: { Authorization: `Bearer ${await getToken()}` }
+                });
+                if (data.success) {
+                    setDashboardData(prev => ({
+                        ...prev,
+                        ...data.dashboardData,
+                        totalUsers: 0
+                    }));
+                }
+            } catch (err) {
+                toast.error(error.response?.data?.message || error.message || "Failed to fetch dashboard data");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -110,33 +131,51 @@ const Dashboard = () => {
                     <table className='min-w-full divide-y divide-gray-200'>
                         <thead className='bg-gray-100 sticky top-0 shadow-sm'>
                             <tr>
+                                <TableHeader title="Booking ID" align="left" />
                                 <TableHeader title="User Name" align="left" />
-                                <TableHeader title="Room Name" align="left" className="max-sm:hidden" />
+                                <TableHeader title="Room Type" align="left" className="max-sm:hidden" />
+                                <TableHeader title="Date" align="center" />
+                                <TableHeader title="Duration" align="center" className="max-md:hidden" />
                                 <TableHeader title="Amount" align="center" />
                                 <TableHeader title="Status" align="center" />
                             </tr>
                         </thead>
                         <tbody className='bg-white divide-y divide-gray-100 text-sm'>
                             {dashboardData.bookings && dashboardData.bookings.length > 0 ? (
-                                dashboardData.bookings.map((item, index) => (
-                                    <tr key={index} className='hover:bg-blue-50 transition-colors duration-100'>
-                                        <td className='py-3 px-4 whitespace-nowrap text-gray-800 font-medium'>
-                                            {item.user?.name || 'Guest User'}
-                                        </td>
-                                        <td className='py-3 px-4 whitespace-nowrap text-gray-500 max-sm:hidden'>
-                                            {item.room?.name || item.room?.roomNumber || 'Room Deleted'}
-                                        </td>
-                                        <td className='py-3 px-4 whitespace-nowrap text-gray-700 font-semibold text-center'>
-                                            {formatCurrency(item.totalPrice)}
-                                        </td>
-                                        <td className='py-3 px-4 whitespace-nowrap text-center'>
-                                            <StatusBadge isPaid={item.isPaid} />
-                                        </td>
-                                    </tr>
-                                ))
+                                dashboardData.bookings.slice(0, 10).map((item) => {
+                                    const checkIn = new Date(item.checkInDate);
+                                    const checkOut = new Date(item.checkOutDate);
+                                    const durationHours = Math.round((checkOut - checkIn) / (1000 * 60 * 60));
+                                    
+                                    return (
+                                        <tr key={item._id} className='hover:bg-blue-50 transition-colors duration-100'>
+                                            <td className='py-3 px-4 whitespace-nowrap text-gray-800 font-mono text-xs'>
+                                                {item.referenceId || item._id.slice(-8)}
+                                            </td>
+                                            <td className='py-3 px-4 whitespace-nowrap text-gray-800 font-medium'>
+                                                {item.user?.username || item.user?.name || 'Guest User'}
+                                            </td>
+                                            <td className='py-3 px-4 whitespace-nowrap text-gray-500 max-sm:hidden'>
+                                                {item.property?.roomType || 'N/A'}
+                                            </td>
+                                            <td className='py-3 px-4 whitespace-nowrap text-gray-700 text-center'>
+                                                {checkIn.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                            </td>
+                                            <td className='py-3 px-4 whitespace-nowrap text-gray-700 text-center max-md:hidden'>
+                                                {durationHours} hour{durationHours !== 1 ? 's' : ''}
+                                            </td>
+                                            <td className='py-3 px-4 whitespace-nowrap text-gray-700 font-semibold text-center'>
+                                                {formatCurrency(item.totalPrice)}
+                                            </td>
+                                            <td className='py-3 px-4 whitespace-nowrap text-center'>
+                                                <StatusBadge isPaid={item.isPaid} />
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             ) : (
                                 <tr>
-                                    <td colSpan="4" className='p-6 text-center text-gray-500 text-base'>
+                                    <td colSpan="7" className='p-6 text-center text-gray-500 text-base'>
                                         No recent bookings found.
                                     </td>
                                 </tr>

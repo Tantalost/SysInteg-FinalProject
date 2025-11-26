@@ -6,7 +6,7 @@ import Property from "../models/Property.js";
 // API to create a new property for a room
 export const createProperty = async (req, res) => {
     try {
-        const { name ,roomType, pricePerHour, amenities } = req.body;
+        const { name, roomType, pricePerHour, amenities } = req.body;
 
         console.log("Files received:", req.files); 
 
@@ -37,7 +37,7 @@ export const createProperty = async (req, res) => {
         const images = await Promise.all(uploadedImages)
 
         const newProperty = await Property.create({
-            name,
+            name: name || roomType, // Use roomType as default name if not provided
             room: room._id,     
             roomType,
             pricePerHour: +pricePerHour,

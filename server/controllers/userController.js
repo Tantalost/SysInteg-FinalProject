@@ -71,3 +71,13 @@ export const promoteToAdmin = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+// GET /api/users/count - Get total user count
+export const getUserCount = async (req, res) => {
+    try {
+        const count = await User.countDocuments();
+        res.json({ success: true, count });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+};

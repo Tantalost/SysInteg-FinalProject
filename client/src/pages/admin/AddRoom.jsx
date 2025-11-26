@@ -28,7 +28,6 @@ const createAmenityState = () =>
 const createImageSlots = () => Array.from({ length: MAX_IMAGES }, () => null)
 
 const initialFormState = {
-  name: '',
   roomType: '',
   pricePerHour: '',
 }
@@ -94,7 +93,6 @@ const AddRoom = () => {
   }
 
   const validateForm = () => {
-    if (!formValues.name.trim()) return 'Room name is required.'
     if (!formValues.roomType) return 'Select a room type.'
 
     const price = Number(formValues.pricePerHour)
@@ -122,7 +120,6 @@ const AddRoom = () => {
       }
 
       const formData = new FormData()
-      formData.append('name', formValues.name.trim())
       formData.append('roomType', formValues.roomType)
       formData.append('pricePerHour', Number(formValues.pricePerHour))
       formData.append('amenities', JSON.stringify(selectedAmenities))
@@ -195,17 +192,6 @@ const AddRoom = () => {
 
       <div className='w-full flex max-sm:flex-col sm:gap-4 mt-4'>
         <div className='flex-1 flex max-sm:flex-col sm:gap-4'>
-          <div className='flex-1'>
-            <p className='text-gray-800 mt-4'>Room Name</p>
-            <input
-              type="text"
-              value={formValues.name}
-              onChange={e => handleFieldChange('name', e.target.value)}
-              className='border opacity-70 border-gray-300 mt-1 rounded p-2 w-full'
-              required
-            />
-          </div>
-
           <div className='flex-1'>
             <p className='text-gray-800 mt-4'>Room Type</p>
             <select

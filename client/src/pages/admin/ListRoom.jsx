@@ -16,6 +16,8 @@ const AMENITY_OPTIONS = [
   '24/7 Support Staff'
 ]
 
+const ITEMS_PER_PAGE = 10
+
 const ListRoom = () => {
 
   const [rooms, setRooms] = useState([])
@@ -24,6 +26,7 @@ const ListRoom = () => {
   const [editPayload, setEditPayload] = useState({ roomType: '', pricePerHour: '', amenities: [] })
   const [isUpdatingRoom, setIsUpdatingRoom] = useState(false)
   const [pendingAction, setPendingAction] = useState({ type: null, id: null })
+  const [currentPage, setCurrentPage] = useState(1)
   const { axios, getToken, user, currency } = useAppContext()
 
   const fetchRooms = async () => {
@@ -178,6 +181,16 @@ const ListRoom = () => {
 
   const formattedRooms = useMemo(() => rooms || [], [rooms])
 
+  // Pagination logic
+  const totalPages = Math.ceil(formattedRooms.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const paginatedRooms = formattedRooms.slice(startIndex, endIndex)
+
+  const goToPage = (page) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)))
+  }
+
   useEffect(() => {
     if (user) {
       fetchRooms()
@@ -198,21 +211,18 @@ const ListRoom = () => {
                 {/* Table Header: Sticky and Cleaner */}
                 <thead className='bg-gray-100 sticky top-0 shadow-sm'>
                     <tr>
-                        <th className='py-4 px-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider'>Room Name</th>
                         <th className='py-4 px-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider'>Room Type</th>
-                        {/* Renamed Facility to Amenities for clarity, hidden on small screens */}
                         <th className='py-4 px-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider max-md:hidden'>Amenities</th>
-                        {/* Changed Price/night to Price/hour for consistency */}
                         <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider'>Price / hour</th> 
                         <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider'>Availability</th>
-                        <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider'>Action</th>
+                        <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider'>Actions</th>
                     </tr>
                 </thead>
                 
                 {/* Table Body: Cleaner Separators and Hover Effect */}
                 <tbody className='bg-white divide-y divide-gray-100 text-sm'>
-                    {formattedRooms.length > 0 ? (
-                        formattedRooms.map((item) => (
+                    {paginatedRooms.length > 0 ? (
+                        paginatedRooms.map((item) => (
                             <tr key={item._id} className='hover:bg-blue-50 transition-colors duration-100'>
                                 {/* Room Type */}
                                 <td className='py-3 px-4 text-gray-800 font-medium whitespace-nowrap'>
@@ -285,6 +295,46 @@ const ListRoom = () => {
                 </tbody>
             </table>
         </div>
+        
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className='flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-200'>
+            <div className='text-sm text-gray-700'>
+              Showing {startIndex + 1} to {Math.min(endIndex, formattedRooms.length)} of {formattedRooms.length} rooms
+            </div>
+            <div className='flex gap-2'>
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className='px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed'
+              >
+                Previous
+              </button>
+              <div className='flex gap-1'>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => goToPage(page)}
+                    className={`px-3 py-1 text-sm border rounded ${
+                      currentPage === page
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'border-gray-300 hover:bg-gray-100'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className='px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed'
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
     </div>
 
     {/* Edit Modal */}
