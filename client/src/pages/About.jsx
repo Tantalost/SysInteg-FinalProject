@@ -7,36 +7,36 @@ const About = () => {
             name: "John Lloyd Climaco",
             role: "Full Stack Developer",
             description: "Skilled in building and maintaining both front-end and back-end applications, capable of delivering complete end-to-end web or mobile solutions.",
-            image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80",
-            hoverImage: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=300&q=80"
+            image: "https://media.tenor.com/1GznYBOTdtgAAAAM/ugly-fish.gif",
+            hoverImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHWaSK5Cts1OmO7Uip1T7lYgTFz2OZNOfDgA&s"
         },
         {
             name: "Stephanie Villamor",
             role: "UI/UX Designer",
             description: "Designs intuitive and engaging user interfaces while ensuring a seamless user experience across web and mobile applications.",
-            image: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=300&q=80",
-            hoverImage: "https://images.unsplash.com/photo-1525130413817-d45c1d127c42?auto=format&fit=crop&w=300&q=80"
+            image: "https://i.redd.it/id-please-ik-its-a-meme-im-not-joking-v0-pveese881gna1.jpg?width=720&format=pjpg&auto=webp&s=e42849d3a376792cd8e86347615e9eb47396ec76",
+            hoverImage: "https://pbs.twimg.com/media/G2ygFFCWcAAVZcf.jpg"
         },
         {
             name: "Vennashier Malali",
             role: "Quality Assurance Engineer",
             description: "Tests, monitors, and ensures software quality by identifying bugs and verifying functionality to deliver reliable, high-performing applications.",
-            image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80",
-            hoverImage: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=300&q=80"
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtw_SOHshGu9EsyyKZX4tlvPevh9WW9SiUwQ&s",
+            hoverImage: "https://i.pinimg.com/736x/67/4b/15/674b1568ff5ccabda9daa43901eb38d7.jpg"
         },
         {
             name: "Justin James Alviar",
             role: "Project Manager",
             description: "Plans, executes, and oversees projects, coordinating teams and resources to ensure timely delivery and alignment with business objectives.",
-            image: "https://images.unsplash.com/photo-1528892952291-009c663ce843?auto=format&fit=crop&w=300&q=80",
-            hoverImage: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80"
+            image: "https://upload.wikimedia.org/wikipedia/en/4/46/Mr_Blobby_%28fish%29%2C_2003.jpg",
+            hoverImage: "https://pbs.twimg.com/media/FrpNfNJWYAIi3pN.jpg"
         },
         {
             name: "Jayna Sahibul",
             role: "Business Analyst",
             description: "Analyzes business needs, gathers requirements, and translates them into actionable solutions to drive efficiency and support decision-making.",
-            image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80",
-            hoverImage: "https://images.unsplash.com/photo-1525130413817-d45c1d127c42?auto=format&fit=crop&w=300&q=80"
+            image: "https://m.media-amazon.com/images/I/5126vGX4OhL._AC_UF350,350_QL50_.jpg",
+            hoverImage: "https://a.pinatafarm.com/1000x1000/be18c4469d/cat-with-tongue-out-e14f30982528aaee7d357480195f236f-meme.jpeg"
         }
     ];
 
