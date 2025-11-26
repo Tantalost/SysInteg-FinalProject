@@ -249,7 +249,7 @@ const ManageBookings = () => {
                     </td>
                     
                     <td className='py-3 px-4 text-gray-800 font-medium whitespace-nowrap'>
-                      {booking.user?.username || booking.user?.name || 'Guest User'}
+                      {booking.user?.email || 'Guest User'}
                     </td>
                     
                     <td className='py-3 px-4 text-gray-500 max-md:hidden whitespace-nowrap'>
