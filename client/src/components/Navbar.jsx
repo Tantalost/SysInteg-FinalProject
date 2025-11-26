@@ -39,7 +39,7 @@ const Navbar = () => {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, [location.pathname]);
-    
+
     // Determine the text color based on scroll/page state
     const textColor = isScrolled ? "text-gray-700" : "text-white";
     const underlineColor = isScrolled ? "bg-red-600" : "bg-white";
@@ -48,32 +48,29 @@ const Navbar = () => {
         <nav className={`fixed top-0 left-0 w-full flex items-center justify-between px-4 md:px-16 lg:px-24 xl:px-32 transition-all duration-500 z-50 h-[80px] ${isScrolled ? "bg-white/95 shadow-lg backdrop-blur-sm" : "bg-transparent py-4"}`}>
 
             <Link to='/' className="flex items-center">
-                {/* Adjusting logo size/inversion for better visual continuity */}
-                <img 
-                    src={assets.logo} 
-                    alt="logo" 
-                    className={`w-auto transition-all duration-300 ${isScrolled ? "h-12" : "h-12 filter brightness-0 invert"}`} 
+                <img
+                    src={assets.logo}
+                    alt="logo"
+                    className={`w-auto transition-all duration-300 ${isScrolled ? "h-40 filter invert" : "h-40"}`}
                 />
             </Link>
 
-            <div className="hidden md:flex items-center gap-4 lg:gap-8 text-sm font-medium">
+            <div className="hidden md:flex items-center gap-4 lg:gap-8 text-sm font-medium absolute left-1/2 -translate-x-1/2">
                 {navLinks.map((link, i) => (
                     <Link
                         key={i}
                         to={link.path}
-                        className={`group flex flex-col gap-0.5 transition-all duration-300 hover:text-red-600 ${
-                            isActive(link.path)
+                        className={`group flex flex-col items-center gap-0.5 transition-all duration-300 hover:text-red-600 ${isActive(link.path)
                                 ? "text-red-600 font-semibold"
                                 : textColor
-                        }`}
+                            }`}
                     >
                         {link.name}
-                        <div className={`${
-                            isActive(link.path) ? "w-full bg-red-600" : `w-0 ${underlineColor}`
-                        } h-0.5 group-hover:w-full transition-all duration-300`} />
+                        <div className={`${isActive(link.path) ? "w-full bg-red-600" : `w-0 ${underlineColor}`
+                            } h-0.5 group-hover:w-full transition-all duration-300`} />
                     </Link>
                 ))}
-                
+
                 {user && user.id === ADMIN_USER_ID && (
                     <button
                         className={`border px-3 py-1.5 text-xs font-medium rounded-full cursor-pointer transition-all ${isScrolled ? 'text-gray-800 border-gray-400 hover:bg-gray-100' : 'text-white border-white hover:bg-white/20'}`}
@@ -85,13 +82,6 @@ const Navbar = () => {
             </div>
 
             <div className="hidden md:flex items-center gap-6">
-                {/* Search Icon */}
-                <img 
-                    src={assets.searchIcon} 
-                    alt="search" 
-                    className={`${isScrolled ? 'invert-0' : 'invert'} h-4 transition-all duration-500 cursor-pointer`} 
-                />
-                
                 {user ? (
                     <UserButton afterSignOutUrl="/">
                         <UserButton.MenuItems>
@@ -99,8 +89,8 @@ const Navbar = () => {
                         </UserButton.MenuItems>
                     </UserButton>
                 ) : (
-                    <button 
-                        onClick={openSignIn} 
+                    <button
+                        onClick={openSignIn}
                         className={`px-6 py-2 rounded-full cursor-pointer font-medium text-sm transition-all duration-500 shadow-lg ${isScrolled ? "text-white bg-red-600 hover:bg-red-700" : "bg-white text-gray-800 hover:bg-gray-100"}`}
                     >
                         Login
@@ -117,11 +107,11 @@ const Navbar = () => {
                         </UserButton.MenuItems>
                     </UserButton>
                 )}
-                <img 
-                    onClick={() => setIsMenuOpen(!isMenuOpen)} 
-                    src={assets.menuIcon} 
-                    alt="menu" 
-                    className={`${isScrolled ? "invert-0" : "invert"} h-5 cursor-pointer`} 
+                <img
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    src={assets.menuIcon}
+                    alt="menu"
+                    className={`${isScrolled ? "invert-0" : "invert"} h-5 cursor-pointer`}
                 />
             </div>
 
@@ -155,7 +145,7 @@ const Navbar = () => {
                 )}
 
                 {!user && (
-                    <button onClick={() => {openSignIn(); setIsMenuOpen(false);}} className="mt-6 bg-red-600 text-white px-8 py-3 rounded-full font-medium transition-all hover:bg-red-700">
+                    <button onClick={() => { openSignIn(); setIsMenuOpen(false); }} className="mt-6 bg-red-600 text-white px-8 py-3 rounded-full font-medium transition-all hover:bg-red-700">
                         Login / Sign Up
                     </button>
                 )}
