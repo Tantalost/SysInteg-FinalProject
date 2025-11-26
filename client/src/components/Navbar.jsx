@@ -3,11 +3,11 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets.js';
 import { useClerk, UserButton } from '@clerk/clerk-react';
 import { useAppContext } from '../context/AppContext.jsx';
+import { IoBookOutline } from 'react-icons/io5'; // Using react-icons for a cleaner look
 
 const BookIcon = () => (
-    <svg className="w-4 h-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" >
-        <path stroke="#D10000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4" />
-    </svg>
+    // Replaced SVG with react-icon for consistency, using an icon relevant to bookings
+    <IoBookOutline className="w-5 h-5 text-gray-700" />
 )
 const ADMIN_USER_ID = "user_35jwIVDrqhFillS7GlLQvnMEyll";
 
@@ -29,86 +29,105 @@ const Navbar = () => {
     const isActive = (path) => location.pathname === path;
 
     useEffect(() => {
-        if (location.pathname !== '/') {
-            setIsScrolled(true);
-        } else {
-            setIsScrolled(false);
-        }
+        // Set initial scroll state based on path
+        setIsScrolled(location.pathname !== '/');
 
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10);
+            setIsScrolled(window.scrollY > 10 || location.pathname !== '/');
         };
+
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, [location.pathname]);
+    
+    // Determine the text color based on scroll/page state
+    const textColor = isScrolled ? "text-gray-700" : "text-white";
+    const underlineColor = isScrolled ? "bg-red-600" : "bg-white";
 
     return (
-        <nav className={`fixed top-0 left-0 w-full h-[80px] flex items-center justify-between px-4 md:px-16 lg:px-24 xl:px-32 transition-all duration-500 z-50 ${isScrolled ? "bg-white/80 shadow-md text-gray-700 backdrop-blur-lg py-3 md:py-4" : "py-4 md:py-6"}`}>
+        <nav className={`fixed top-0 left-0 w-full flex items-center justify-between px-4 md:px-16 lg:px-24 xl:px-32 transition-all duration-500 z-50 h-[80px] ${isScrolled ? "bg-white/95 shadow-lg backdrop-blur-sm" : "bg-transparent py-4"}`}>
 
-            <Link to='/'>
-                <img src={assets.logo} alt="logo" className={`w-auto h-40 transition-all duration-300 ${isScrolled ? "h-40 invert opacity-80" : "h-40"}`} />
+            <Link to='/' className="flex items-center">
+                {/* Adjusting logo size/inversion for better visual continuity */}
+                <img 
+                    src={assets.logo} 
+                    alt="logo" 
+                    className={`w-auto transition-all duration-300 ${isScrolled ? "h-12" : "h-12 filter brightness-0 invert"}`} 
+                />
             </Link>
 
-            <div className="hidden md:flex items-center gap-4 lg:gap-8">
+            <div className="hidden md:flex items-center gap-4 lg:gap-8 text-sm font-medium">
                 {navLinks.map((link, i) => (
                     <Link
                         key={i}
                         to={link.path}
-                        className={`group flex flex-col gap-0.5 transition-all duration-300 
-                            ${isActive(link.path)
+                        className={`group flex flex-col gap-0.5 transition-all duration-300 hover:text-red-600 ${
+                            isActive(link.path)
                                 ? "text-red-600 font-semibold"
-                                : isScrolled
-                                    ? "text-gray-700"
-                                    : "text-white"}`
-                        }
+                                : textColor
+                        }`}
                     >
                         {link.name}
-                        <div className={`${isActive(link.path)
-                            ? "bg-red-600"
-                            : isScrolled
-                                ? "bg-gray-700"
-                                : "bg-white"} 
-                                        h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
+                        <div className={`${
+                            isActive(link.path) ? "w-full bg-red-600" : `w-0 ${underlineColor}`
+                        } h-0.5 group-hover:w-full transition-all duration-300`} />
                     </Link>
                 ))}
+                
                 {user && user.id === ADMIN_USER_ID && (
                     <button
-                        className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`}
+                        className={`border px-3 py-1.5 text-xs font-medium rounded-full cursor-pointer transition-all ${isScrolled ? 'text-gray-800 border-gray-400 hover:bg-gray-100' : 'text-white border-white hover:bg-white/20'}`}
                         onClick={() => navigate('/admin')}
                     >
-                        Dashboard
+                        Admin Dashboard
                     </button>
                 )}
             </div>
 
-            <div className="hidden md:flex items-center gap-4">
-                <img src={assets.searchIcon} alt="search" className={`${isScrolled ? 'invert' : ''} h-10 transition-all duration-500`} />
+            <div className="hidden md:flex items-center gap-6">
+                {/* Search Icon */}
+                <img 
+                    src={assets.searchIcon} 
+                    alt="search" 
+                    className={`${isScrolled ? 'invert-0' : 'invert'} h-4 transition-all duration-500 cursor-pointer`} 
+                />
+                
                 {user ? (
-                    <UserButton>
+                    <UserButton afterSignOutUrl="/">
                         <UserButton.MenuItems>
                             <UserButton.Action label="My Bookings" labelIcon={<BookIcon />} onClick={() => navigate('/my-bookings')} />
                         </UserButton.MenuItems>
                     </UserButton>
                 ) : (
-                    <button onClick={openSignIn} className={`px-8 py-2.5 rounded-full cursor-pointer ml-4 transition-all duration-500 ${isScrolled ? "text-white bg-black" : "bg-white text-black"}`}>
+                    <button 
+                        onClick={openSignIn} 
+                        className={`px-6 py-2 rounded-full cursor-pointer font-medium text-sm transition-all duration-500 shadow-lg ${isScrolled ? "text-white bg-red-600 hover:bg-red-700" : "bg-white text-gray-800 hover:bg-gray-100"}`}
+                    >
                         Login
                     </button>
                 )}
             </div>
 
+            {/* Mobile Menu Button */}
             <div className="flex items-center gap-3 md:hidden">
                 {user && (
-                    <UserButton>
+                    <UserButton afterSignOutUrl="/">
                         <UserButton.MenuItems>
                             <UserButton.Action label="My Bookings" labelIcon={<BookIcon />} onClick={() => navigate('/my-bookings')} />
                         </UserButton.MenuItems>
                     </UserButton>
                 )}
-                <img onClick={() => setIsMenuOpen(!isMenuOpen)} src={assets.menuIcon} alt="menu" className={`${isScrolled ? "invert" : ""} h-4`} />
+                <img 
+                    onClick={() => setIsMenuOpen(!isMenuOpen)} 
+                    src={assets.menuIcon} 
+                    alt="menu" 
+                    className={`${isScrolled ? "invert-0" : "invert"} h-5 cursor-pointer`} 
+                />
             </div>
 
-            <div className={`fixed top-0 left-0 w-full h-screen bg-white text-base flex flex-col md:hidden items-center justify-center gap-6 font-medium text-gray-800 transition-all duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-                <button className="absolute top-4 right-4" onClick={() => setIsMenuOpen(false)}>
+            {/* Mobile Menu Overlay (Cleaned up) */}
+            <div className={`fixed top-0 left-0 w-full h-screen bg-white text-lg flex flex-col md:hidden items-center justify-center gap-8 font-medium text-gray-800 transition-transform duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
+                <button className="absolute top-6 right-6" onClick={() => setIsMenuOpen(false)}>
                     <img src={assets.closeIcon} alt="closeMenu" className="h-6.5" />
                 </button>
 
@@ -117,7 +136,7 @@ const Navbar = () => {
                         key={i}
                         to={link.path}
                         onClick={() => setIsMenuOpen(false)}
-                        className={`${isActive(link.path) ? "text-red-600 font-semibold" : "text-gray-800"}`}
+                        className={`text-xl font-semibold ${isActive(link.path) ? "text-red-600" : "text-gray-800 hover:text-red-500"}`}
                     >
                         {link.name}
                     </Link>
@@ -125,16 +144,19 @@ const Navbar = () => {
 
                 {user && user.id === ADMIN_USER_ID && (
                     <button
-                        className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
-                        onClick={() => navigate('/admin')}
+                        className="mt-4 px-4 py-2 text-base font-medium rounded-full bg-gray-100 border border-gray-300 hover:bg-gray-200 transition-all"
+                        onClick={() => {
+                            navigate('/admin');
+                            setIsMenuOpen(false);
+                        }}
                     >
-                        Dashboard
+                        Admin Dashboard
                     </button>
                 )}
 
                 {!user && (
-                    <button onClick={openSignIn} className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500">
-                        Login
+                    <button onClick={() => {openSignIn(); setIsMenuOpen(false);}} className="mt-6 bg-red-600 text-white px-8 py-3 rounded-full font-medium transition-all hover:bg-red-700">
+                        Login / Sign Up
                     </button>
                 )}
             </div>
