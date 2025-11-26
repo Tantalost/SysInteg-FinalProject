@@ -8,6 +8,9 @@ const propertySchema = new mongoose.Schema({
     images: [{type: String}],
     isAvailable: {type: Boolean, default: true},
     room: {type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true},
+    discountPercent: {type: Number, default: 0},
+    discountStartDate: {type: Date},
+    discountEndDate: {type: Date},
 
 },{timestamps: true});
 

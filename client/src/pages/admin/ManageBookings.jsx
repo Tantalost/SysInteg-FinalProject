@@ -2,14 +2,19 @@ import React, { useEffect, useState, useMemo } from 'react'
 import Title from '../../components/Title'
 import { useAppContext } from '../../context/AppContext'
 import toast from 'react-hot-toast'
-import { FaEye, FaCheckCircle, FaTimesCircle } from 'react-icons/fa'
+import { FaCheckCircle, FaTimesCircle, FaTimes } from 'react-icons/fa'
 
 const ITEMS_PER_PAGE = 10
 
 const ManageBookings = () => {
   const [bookings, setBookings] = useState([])
+  const [filteredBookings, setFilteredBookings] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedFilter, setSelectedFilter] = useState('all')
+  const [selectedBooking, setSelectedBooking] = useState(null)
+  const [showDetailsModal, setShowDetailsModal] = useState(false)
   const { axios, getToken, user, currency } = useAppContext()
 
   const fetchBookings = async () => {
@@ -20,7 +25,9 @@ const ManageBookings = () => {
       })
 
       if (data.success) {
-        setBookings(data.dashboardData?.bookings || [])
+        const bookingsData = data.dashboardData?.bookings || []
+        setBookings(bookingsData)
+        setFilteredBookings(bookingsData)
       } else {
         toast.error(data.message)
       }
@@ -60,17 +67,78 @@ const ManageBookings = () => {
     return `${diffHours} hour${diffHours !== 1 ? 's' : ''}`
   }
 
+  const applyFilters = () => {
+    let filtered = [...bookings]
+
+    // Apply time filter
+    if (selectedFilter !== 'all') {
+      const now = new Date()
+      let startDate
+      
+      if (selectedFilter === 'week') {
+        const dayOfWeek = now.getDay()
+        startDate = new Date(now)
+        startDate.setDate(now.getDate() - dayOfWeek)
+        startDate.setHours(0, 0, 0, 0)
+      } else if (selectedFilter === 'month') {
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+      } else if (selectedFilter === 'year') {
+        startDate = new Date(now.getFullYear(), 0, 1)
+      }
+
+      filtered = filtered.filter(booking => {
+        const bookingDate = new Date(booking.createdAt || booking.checkInDate)
+        return bookingDate >= startDate
+      })
+    }
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim()
+      filtered = filtered.filter(booking => {
+        const bookingId = (booking.referenceId || booking._id).toLowerCase()
+        return bookingId.includes(query)
+      })
+    }
+
+    return filtered
+  }
+
+  const handleSearch = () => {
+    const filtered = applyFilters()
+    if (filtered.length === 0 && searchQuery.trim()) {
+      toast.error('No booking found with that ID')
+    } else if (filtered.length === 1 && searchQuery.trim()) {
+      setSelectedBooking(filtered[0])
+      setShowDetailsModal(true)
+    }
+  }
+
+  const handleFilterChange = (filter) => {
+    setSelectedFilter(filter)
+  }
+
   useEffect(() => {
     if (user) {
       fetchBookings()
     }
   }, [user])
 
+  useEffect(() => {
+    if (bookings.length > 0) {
+      const filtered = applyFilters()
+      setFilteredBookings(filtered)
+      setCurrentPage(1)
+    } else {
+      setFilteredBookings([])
+    }
+  }, [selectedFilter, searchQuery, bookings])
+
   // Pagination logic
-  const totalPages = Math.ceil(bookings.length / ITEMS_PER_PAGE)
+  const totalPages = Math.ceil(filteredBookings.length / ITEMS_PER_PAGE)
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const endIndex = startIndex + ITEMS_PER_PAGE
-  const paginatedBookings = bookings.slice(startIndex, endIndex)
+  const paginatedBookings = filteredBookings.slice(startIndex, endIndex)
 
   const goToPage = (page) => {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)))
@@ -88,7 +156,70 @@ const ManageBookings = () => {
     <div className='p-4 md:p-8 max-w-7xl mx-auto'>
       <Title align='left' font='outfit' title='Manage Bookings' />
       
-      <h2 className='text-lg font-semibold text-gray-700 mt-6 mb-4'>All Bookings</h2>
+      {/* Search and Filter Section */}
+      <div className='mb-6 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between'>
+        <div className='flex flex-col md:flex-row gap-3 flex-1'>
+          <div className='flex gap-2'>
+            <input
+              type="text"
+              placeholder="Search by Booking ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              className='px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+            />
+            <button
+              onClick={handleSearch}
+              className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition'
+            >
+              Search
+            </button>
+          </div>
+          
+          <div className='flex gap-2'>
+            <button
+              onClick={() => handleFilterChange('all')}
+              className={`px-4 py-2 rounded-lg transition ${
+                selectedFilter === 'all'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              All
+            </button>
+            <button
+              onClick={() => handleFilterChange('week')}
+              className={`px-4 py-2 rounded-lg transition ${
+                selectedFilter === 'week'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              This Week
+            </button>
+            <button
+              onClick={() => handleFilterChange('month')}
+              className={`px-4 py-2 rounded-lg transition ${
+                selectedFilter === 'month'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              This Month
+            </button>
+            <button
+              onClick={() => handleFilterChange('year')}
+              className={`px-4 py-2 rounded-lg transition ${
+                selectedFilter === 'year'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              This Year
+            </button>
+          </div>
+        </div>
+      </div>
       
       <div className='w-full shadow-2xl rounded-xl overflow-hidden border border-gray-100'>
         <div className='max-h-[70vh] overflow-y-auto'>
@@ -99,8 +230,10 @@ const ManageBookings = () => {
                 <th className='py-4 px-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider'>User</th>
                 <th className='py-4 px-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider max-md:hidden'>Room Type</th>
                 <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider'>Date</th>
-                <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider max-md:hidden'>Time</th>
+                <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider max-md:hidden'>Start Time</th>
+                <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider max-md:hidden'>End Time</th>
                 <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider'>Duration</th>
+                <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider max-md:hidden'>Created</th>
                 <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider'>Guests</th>
                 <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider'>Amount</th>
                 <th className='py-4 px-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider'>Status</th>
@@ -131,8 +264,16 @@ const ManageBookings = () => {
                       {formatTime(booking.checkInDate)}
                     </td>
                     
+                    <td className='py-3 px-4 text-gray-500 text-center max-md:hidden whitespace-nowrap'>
+                      {formatTime(booking.checkOutDate)}
+                    </td>
+                    
                     <td className='py-3 px-4 text-gray-700 text-center whitespace-nowrap'>
                       {calculateDuration(booking.checkInDate, booking.checkOutDate)}
+                    </td>
+                    
+                    <td className='py-3 px-4 text-gray-500 text-center max-md:hidden whitespace-nowrap text-xs'>
+                      {formatDate(booking.createdAt)}
                     </td>
                     
                     <td className='py-3 px-4 text-gray-700 text-center whitespace-nowrap'>
@@ -166,7 +307,7 @@ const ManageBookings = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="9" className="text-center py-8 text-gray-500 text-base">
+                  <td colSpan="10" className="text-center py-8 text-gray-500 text-base">
                     No bookings found.
                   </td>
                 </tr>
@@ -179,7 +320,7 @@ const ManageBookings = () => {
         {totalPages > 1 && (
           <div className='flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-200'>
             <div className='text-sm text-gray-700'>
-              Showing {startIndex + 1} to {Math.min(endIndex, bookings.length)} of {bookings.length} bookings
+              Showing {startIndex + 1} to {Math.min(endIndex, filteredBookings.length)} of {filteredBookings.length} bookings
             </div>
             <div className='flex gap-2'>
               <button
@@ -227,6 +368,89 @@ const ManageBookings = () => {
           </div>
         )}
       </div>
+
+      {/* Booking Details Modal */}
+      {showDetailsModal && selectedBooking && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4'>
+          <div className='bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto'>
+            <div className='flex items-center justify-between mb-4'>
+              <h3 className='text-2xl font-bold text-gray-800'>Booking Details</h3>
+              <button
+                onClick={() => {
+                  setShowDetailsModal(false)
+                  setSelectedBooking(null)
+                }}
+                className='text-gray-500 hover:text-gray-800'
+              >
+                <FaTimes className='text-xl' />
+              </button>
+            </div>
+            
+            <div className='space-y-4'>
+              <div className='grid grid-cols-2 gap-4'>
+                <div>
+                  <p className='text-sm text-gray-500'>Booking ID</p>
+                  <p className='font-mono text-sm font-semibold'>{selectedBooking.referenceId || selectedBooking._id.slice(-8)}</p>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>Status</p>
+                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
+                    selectedBooking.isPaid
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {selectedBooking.isPaid ? 'Paid' : 'Pending'}
+                  </span>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>User</p>
+                  <p className='font-medium'>{selectedBooking.user?.username || selectedBooking.user?.email || 'Guest'}</p>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>Email</p>
+                  <p className='font-medium'>{selectedBooking.user?.email || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>Room Type</p>
+                  <p className='font-medium'>{selectedBooking.property?.roomType || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>Guests</p>
+                  <p className='font-medium'>{selectedBooking.guests || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>Check-in Date</p>
+                  <p className='font-medium'>{formatDate(selectedBooking.checkInDate)}</p>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>Check-in Time</p>
+                  <p className='font-medium'>{formatTime(selectedBooking.checkInDate)}</p>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>Check-out Date</p>
+                  <p className='font-medium'>{formatDate(selectedBooking.checkOutDate)}</p>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>Check-out Time</p>
+                  <p className='font-medium'>{formatTime(selectedBooking.checkOutDate)}</p>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>Duration</p>
+                  <p className='font-medium'>{calculateDuration(selectedBooking.checkInDate, selectedBooking.checkOutDate)}</p>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>Total Amount</p>
+                  <p className='font-bold text-lg'>{currency}{selectedBooking.totalPrice || 0}</p>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>Booking Created</p>
+                  <p className='font-medium'>{formatDate(selectedBooking.createdAt)} {formatTime(selectedBooking.createdAt)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

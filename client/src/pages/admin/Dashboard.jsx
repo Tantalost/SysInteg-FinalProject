@@ -132,7 +132,7 @@ const Dashboard = () => {
                         <thead className='bg-gray-100 sticky top-0 shadow-sm'>
                             <tr>
                                 <TableHeader title="Booking ID" align="left" />
-                                <TableHeader title="User Name" align="left" />
+                                <TableHeader title="User Email" align="left" />
                                 <TableHeader title="Room Type" align="left" className="max-sm:hidden" />
                                 <TableHeader title="Date" align="center" />
                                 <TableHeader title="Duration" align="center" className="max-md:hidden" />
@@ -142,7 +142,7 @@ const Dashboard = () => {
                         </thead>
                         <tbody className='bg-white divide-y divide-gray-100 text-sm'>
                             {dashboardData.bookings && dashboardData.bookings.length > 0 ? (
-                                dashboardData.bookings.slice(0, 10).map((item) => {
+                                dashboardData.bookings.slice(0, 5).map((item) => {
                                     const checkIn = new Date(item.checkInDate);
                                     const checkOut = new Date(item.checkOutDate);
                                     const durationHours = Math.round((checkOut - checkIn) / (1000 * 60 * 60));
@@ -153,7 +153,7 @@ const Dashboard = () => {
                                                 {item.referenceId || item._id.slice(-8)}
                                             </td>
                                             <td className='py-3 px-4 whitespace-nowrap text-gray-800 font-medium'>
-                                                {item.user?.username || item.user?.name || 'Guest User'}
+                                                {item.user?.email || 'Guest User'}
                                             </td>
                                             <td className='py-3 px-4 whitespace-nowrap text-gray-500 max-sm:hidden'>
                                                 {item.property?.roomType || 'N/A'}

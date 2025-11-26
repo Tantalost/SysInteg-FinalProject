@@ -158,7 +158,36 @@ const Services = () => {
                                     </div>
                                 ))}
                             </div>
-                            <p className='text-xl font-medium text-gray-700'>₱{room.pricePerHour} /hour</p>
+                            {(() => {
+                                const now = new Date()
+                                const hasActiveDiscount = room.discountPercent > 0 &&
+                                    room.discountStartDate &&
+                                    room.discountEndDate &&
+                                    now >= new Date(room.discountStartDate) &&
+                                    now <= new Date(room.discountEndDate)
+                                
+                                const discountedPrice = hasActiveDiscount
+                                    ? room.pricePerHour * (1 - room.discountPercent / 100)
+                                    : room.pricePerHour
+                                
+                                return (
+                                    <div className='flex items-center gap-2'>
+                                        {hasActiveDiscount && (
+                                            <p className='text-sm text-gray-400 line-through'>
+                                                {currency}{room.pricePerHour}
+                                            </p>
+                                        )}
+                                        <p className='text-xl font-medium text-gray-700'>
+                                            {currency}{discountedPrice.toFixed(2)} /hour
+                                        </p>
+                                        {hasActiveDiscount && (
+                                            <span className='text-xs text-orange-500 font-semibold bg-orange-50 px-2 py-1 rounded'>
+                                                {room.discountPercent}% OFF
+                                            </span>
+                                        )}
+                                    </div>
+                                )
+                            })()}
                         </div>
                     </div>
                 ))}

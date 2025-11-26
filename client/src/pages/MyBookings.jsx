@@ -113,20 +113,48 @@ const MyBookings = () => {
 
                                 <div className="flex-1">
                                     <h2 className="text-xl font-semibold">
-                                        {booking.name || "Property No Longer Exists"}
+                                        {booking.property?.roomType || booking.property?.name || "Room"}
                                     </h2>
 
-                                    <p className="text-gray-600">
-                                        Room: {booking.roomType || room.roomNumber || "Room Info Unavailable"}
+                                    <p className="text-gray-600 mt-1">
+                                        Booking ID: <span className="font-mono text-sm">{booking.referenceId || booking._id.slice(-8)}</span>
+                                    </p>
+
+                                    <p className="text-sm text-gray-500 mt-2">
+                                        <span className="font-medium">Date:</span> {new Date(booking.checkInDate).toLocaleDateString('en-US', { 
+                                            month: 'short', 
+                                            day: 'numeric', 
+                                            year: 'numeric' 
+                                        })}
                                     </p>
 
                                     <p className="text-sm text-gray-500">
-                                        {new Date(booking.checkInDate).toDateString()} -{" "}
-                                        {new Date(booking.checkOutDate).toDateString()}
+                                        <span className="font-medium">Time:</span> {new Date(booking.checkInDate).toLocaleTimeString('en-US', { 
+                                            hour: '2-digit', 
+                                            minute: '2-digit',
+                                            hour12: true 
+                                        })} - {new Date(booking.checkOutDate).toLocaleTimeString('en-US', { 
+                                            hour: '2-digit', 
+                                            minute: '2-digit',
+                                            hour12: true 
+                                        })}
                                     </p>
 
-                                    <p className="font-bold mt-2">
-                                        Total: {currency} {booking.totalPrice}
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        <span className="font-medium">Duration:</span> {(() => {
+                                            const start = new Date(booking.checkInDate)
+                                            const end = new Date(booking.checkOutDate)
+                                            const hours = Math.round((end - start) / (1000 * 60 * 60))
+                                            return `${hours} hour${hours !== 1 ? 's' : ''}`
+                                        })()}
+                                    </p>
+
+                                    <p className="text-sm text-gray-500">
+                                        <span className="font-medium">Guests:</span> {booking.guests || 'N/A'}
+                                    </p>
+
+                                    <p className="font-bold mt-3 text-lg">
+                                        Total: {currency}{booking.totalPrice || 0}
                                     </p>
                                 </div>
 

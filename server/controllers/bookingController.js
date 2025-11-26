@@ -113,7 +113,18 @@ export const createBooking = async (req, res) => {
             return res.json({ success: false, message: 'Property not found' });
         }
 
-        const totalPrice = roomData.pricePerHour * duration;
+        // Calculate price with discount if applicable
+        let pricePerHour = roomData.pricePerHour;
+        const now = new Date();
+        if (roomData.discountPercent > 0 &&
+            roomData.discountStartDate &&
+            roomData.discountEndDate &&
+            now >= new Date(roomData.discountStartDate) &&
+            now <= new Date(roomData.discountEndDate)) {
+            pricePerHour = roomData.pricePerHour * (1 - roomData.discountPercent / 100);
+        }
+
+        const totalPrice = pricePerHour * duration;
 
         let referenceId;
         let isUnique = false;

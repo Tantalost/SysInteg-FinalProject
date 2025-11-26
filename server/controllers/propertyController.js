@@ -36,6 +36,10 @@ export const createProperty = async (req, res) => {
 
         const images = await Promise.all(uploadedImages)
 
+        const discountPercent = req.body.discountPercent ? +req.body.discountPercent : 0
+        const discountStartDate = req.body.discountStartDate || null
+        const discountEndDate = req.body.discountEndDate || null
+
         const newProperty = await Property.create({
             name: name || roomType, // Use roomType as default name if not provided
             room: room._id,     
@@ -43,6 +47,9 @@ export const createProperty = async (req, res) => {
             pricePerHour: +pricePerHour,
             amenities: JSON.parse(amenities),
             images,
+            discountPercent,
+            discountStartDate: discountStartDate ? new Date(discountStartDate) : null,
+            discountEndDate: discountEndDate ? new Date(discountEndDate) : null,
         })
 
         room.properties = room.properties || []; 

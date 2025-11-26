@@ -201,9 +201,38 @@ const RoomDetails = () => {
                         ))}
                     </div>
                 </div>
-                <p className='text-2xl font-medium'>
-                    {currency}{selectedProperty.pricePerHour}<span className='text-sm text-gray-500'>/hour</span>
-                </p>
+                <div className='flex flex-col items-end'>
+                    {(() => {
+                        const now = new Date()
+                        const hasActiveDiscount = selectedProperty.discountPercent > 0 &&
+                            selectedProperty.discountStartDate &&
+                            selectedProperty.discountEndDate &&
+                            now >= new Date(selectedProperty.discountStartDate) &&
+                            now <= new Date(selectedProperty.discountEndDate)
+                        
+                        const discountedPrice = hasActiveDiscount
+                            ? selectedProperty.pricePerHour * (1 - selectedProperty.discountPercent / 100)
+                            : selectedProperty.pricePerHour
+                        
+                        return (
+                            <>
+                                {hasActiveDiscount && (
+                                    <p className='text-sm text-gray-400 line-through'>
+                                        {currency}{selectedProperty.pricePerHour}
+                                    </p>
+                                )}
+                                <p className='text-2xl font-medium'>
+                                    {currency}{discountedPrice.toFixed(2)}<span className='text-sm text-gray-500'>/hour</span>
+                                </p>
+                                {hasActiveDiscount && (
+                                    <p className='text-xs text-orange-500 font-semibold'>
+                                        {selectedProperty.discountPercent}% OFF
+                                    </p>
+                                )}
+                            </>
+                        )
+                    })()}
+                </div>
             </div>
 
             {/* CheckIn Form */}

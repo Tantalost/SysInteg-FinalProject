@@ -20,7 +20,27 @@ const RoomCard = ({room, index}) => {
                 </div>
             </div>
             <div className='flex items-center justify-between mt-4'>
-                <p><span className='text-xl text-gray-800'>₱{room.pricePerHour}</span>/hour</p>
+                {(() => {
+                    const now = new Date()
+                    const hasActiveDiscount = room.discountPercent > 0 &&
+                        room.discountStartDate &&
+                        room.discountEndDate &&
+                        now >= new Date(room.discountStartDate) &&
+                        now <= new Date(room.discountEndDate)
+                    
+                    const discountedPrice = hasActiveDiscount
+                        ? room.pricePerHour * (1 - room.discountPercent / 100)
+                        : room.pricePerHour
+                    
+                    return (
+                        <div className='flex items-center gap-2'>
+                            {hasActiveDiscount && (
+                                <span className='text-sm text-gray-400 line-through'>₱{room.pricePerHour}</span>
+                            )}
+                            <p><span className='text-xl text-gray-800'>₱{discountedPrice.toFixed(2)}</span>/hour</p>
+                        </div>
+                    )
+                })()}
                 <button className='px-4 py-2 text-sm font-medium border border-gray-300 rounded hover:bg-gray-50 transition-all cursor-pointer'>Book Now</button>
             </div>
         </div>

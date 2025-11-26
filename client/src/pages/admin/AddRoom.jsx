@@ -30,6 +30,9 @@ const createImageSlots = () => Array.from({ length: MAX_IMAGES }, () => null)
 const initialFormState = {
   roomType: '',
   pricePerHour: '',
+  discountPercent: '',
+  discountStartDate: '',
+  discountEndDate: '',
 }
 
 const AddRoom = () => {
@@ -123,6 +126,11 @@ const AddRoom = () => {
       formData.append('roomType', formValues.roomType)
       formData.append('pricePerHour', Number(formValues.pricePerHour))
       formData.append('amenities', JSON.stringify(selectedAmenities))
+      if (formValues.discountPercent) {
+        formData.append('discountPercent', Number(formValues.discountPercent))
+        formData.append('discountStartDate', formValues.discountStartDate)
+        formData.append('discountEndDate', formValues.discountEndDate)
+      }
       selectedFiles.forEach(file => formData.append('images', file))
 
       const { data } = await axios.post('/api/properties', formData, {
@@ -248,6 +256,49 @@ const AddRoom = () => {
             )
           })}
         </div>
+      </div>
+
+      {/* Discount Section */}
+      <div className='border-t pt-6'>
+        <p className="text-gray-700 font-semibold mb-3">Add Discount (Optional)</p>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <div>
+            <p className='text-gray-800 text-sm mb-1'>Discount Percent</p>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={formValues.discountPercent}
+              onChange={e => handleFieldChange('discountPercent', e.target.value)}
+              className='border border-gray-300 rounded p-2 w-full'
+              placeholder="e.g., 10"
+            />
+          </div>
+          <div>
+            <p className='text-gray-800 text-sm mb-1'>Start Date</p>
+            <input
+              type="date"
+              value={formValues.discountStartDate}
+              onChange={e => handleFieldChange('discountStartDate', e.target.value)}
+              className='border border-gray-300 rounded p-2 w-full'
+            />
+          </div>
+          <div>
+            <p className='text-gray-800 text-sm mb-1'>End Date</p>
+            <input
+              type="date"
+              value={formValues.discountEndDate}
+              onChange={e => handleFieldChange('discountEndDate', e.target.value)}
+              min={formValues.discountStartDate}
+              className='border border-gray-300 rounded p-2 w-full'
+            />
+          </div>
+        </div>
+        {formValues.discountPercent && (
+          <p className='text-xs text-gray-500 mt-2'>
+            Discount: {formValues.discountPercent}% - Original: {currency}{formValues.pricePerHour}/hr → Discounted: {currency}{(Number(formValues.pricePerHour) * (1 - Number(formValues.discountPercent) / 100)).toFixed(2)}/hr
+          </p>
+        )}
       </div>
 
       {/* Actions */}
