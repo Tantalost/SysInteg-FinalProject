@@ -146,7 +146,6 @@ const RoomDetails = () => {
     if (!selectedProperty) {
         return <div className='min-h-screen flex justify-center items-center'>Loading...</div>
     }
-
     return (
         <div className='py-28 md:py-35 px-4 md:px-16 lg:px-24 xl:px-32'>
             <div className='flex flex-col md:flex-row items-start md:items-center gap-2'>
