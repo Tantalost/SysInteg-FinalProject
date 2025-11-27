@@ -253,7 +253,7 @@ const ManageBookings = () => {
                     </td>
                     
                     <td className='py-3 px-4 text-gray-500 max-md:hidden whitespace-nowrap'>
-                      {booking.property?.roomType || 'N/A'}
+                      {booking.room?.roomType || 'N/A'}
                     </td>
                     
                     <td className='py-3 px-4 text-gray-700 text-center whitespace-nowrap'>
@@ -412,7 +412,7 @@ const ManageBookings = () => {
                 </div>
                 <div>
                   <p className='text-sm text-gray-500'>Room Type</p>
-                  <p className='font-medium'>{selectedBooking.property?.roomType || 'N/A'}</p>
+                  <p className='font-medium'>{selectedBooking.room?.roomType || 'N/A'}</p>
                 </div>
                 <div>
                   <p className='text-sm text-gray-500'>Guests</p>

@@ -156,7 +156,7 @@ const Dashboard = () => {
                                                 {item.user?.email || 'Guest User'}
                                             </td>
                                             <td className='py-3 px-4 whitespace-nowrap text-gray-500 max-sm:hidden'>
-                                                {item.property?.roomType || 'N/A'}
+                                                {item.room?.roomType || 'N/A'}
                                             </td>
                                             <td className='py-3 px-4 whitespace-nowrap text-gray-700 text-center'>
                                                 {checkIn.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
