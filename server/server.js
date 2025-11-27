@@ -43,7 +43,6 @@ app.post(
   stripeWebhooks
 );
 
-/* ROUTES */
 app.get("/", (req, res) => res.send("API is working"));
 
 app.use("/api/clerk", clearkWebhooks);
@@ -51,8 +50,5 @@ app.use("/api/user", userRouter);
 app.use("/api/rooms", roomRouter);
 app.use("/api/properties", propertyRouter);
 app.use("/api/bookings", bookingRouter);
-
-/* ⛔ DO NOT USE app.listen() ON VERCEL */
-/* Instead export the app */
 
 export default app;
