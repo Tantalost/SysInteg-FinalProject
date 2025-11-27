@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { facilityIcons, roomCommonData } from '../assets/assets' // Removed assets import for brevity
+import { facilityIcons, roomCommonData } from '../assets/assets' 
 import Ratings from '../components/Ratings'
 import AmenityIcon from '../components/AmenityIcon'
 import { useAppContext } from '../context/AppContext.jsx'
@@ -25,24 +25,21 @@ const RoomDetails = () => {
     const [bookedRanges, setBookedRanges] = useState([]);
     const [isLoadingSlots, setIsLoadingSlots] = useState(false);
 
-    // 1. Fetch Availability when Date Changes
     useEffect(() => {
         const fetchAvailability = async () => {
             if (!checkInDate || !id) return;
 
             setIsLoadingSlots(true);
-            setBookedRanges([]); // Reset previous slots
-            setStartTime(''); // Reset selection
+            setBookedRanges([]); 
+            setStartTime(''); 
 
             try {
-                // NOTE: Ensure your backend route matches this path
                 const { data } = await axios.get(`/api/bookings/availability?roomId=${id}&date=${checkInDate}`);
                 if (data.success) {
                     setBookedRanges(data.bookedRanges);
                 }
             } catch (error) {
                 console.error("Failed to fetch availability", error);
-                // Optional: toast.error("Could not load availability");
             } finally {
                 setIsLoadingSlots(false);
             }
@@ -51,26 +48,22 @@ const RoomDetails = () => {
         fetchAvailability();
     }, [checkInDate, id]);
 
-    // 2. Helper to check if a specific time slot is booked
+    // to check if a specific time slot is booked
     const isSlotBooked = (timeString) => {
     if (!checkInDate || bookedRanges.length === 0) return false;
     const currentSlotDate = new Date(`${checkInDate}T${timeString}:00.000Z`);
 
     
     const currentSlotHour = currentSlotDate.getUTCHours();
-    // ----------------------------------------------------------------------
 
 
     return bookedRanges.some(range => {
-        // 1. Parse database times (already in UTC)
         const rangeStart = new Date(range.start);
         const rangeEnd = new Date(range.end);
 
-        // 2. Extract the UTC hours from the database records
         const startHourUTC = rangeStart.getUTCHours();
         const endHourUTC = rangeEnd.getUTCHours();
 
-        // 3. Simple numeric comparison in UTC
         return currentSlotHour >= startHourUTC && currentSlotHour < endHourUTC;
     });
 };
@@ -145,7 +138,6 @@ const RoomDetails = () => {
             console.log("DB Range (Raw):", bookedRanges[0]);
             console.log("DB Range Start (Parsed):", new Date(bookedRanges[0].start).toISOString());
 
-            // Check 8:00 AM
             const testSlot = new Date(`${checkInDate}T08:00:00.000Z`);
             console.log("Test Slot 08:00 (ISO):", testSlot.toISOString());
         }
@@ -188,7 +180,6 @@ const RoomDetails = () => {
                 </div>
             </div>
 
-            {/* Room Highlights */}
             <div className='flex flex-col md:flex-row md:justify-between mt-10'>
                 <div className='flex flex-col'>
                     <h1 className='text-3xl md:text-4xl font-playfair'>Experience Entertainment Like Never Before</h1>
@@ -235,11 +226,9 @@ const RoomDetails = () => {
                 </div>
             </div>
 
-            {/* CheckIn Form */}
             <form onSubmit={onSubmitHandler} className='flex flex-col bg-white shadow-[0px_0px_20px_rgba(0,0,0,0.15)] p-6 rounded-xl mx-auto mt-16 max-w-6xl'>
 
                 <div className='flex flex-col md:flex-row justify-between gap-6 mb-6'>
-                    {/* Date Picker */}
                     <div className='flex flex-col w-full md:w-1/3'>
                         <label htmlFor="checkInDate" className='font-medium text-gray-600 mb-2'>Select Date</label>
                         <input
@@ -247,13 +236,12 @@ const RoomDetails = () => {
                             id='checkInDate'
                             required
                             value={checkInDate}
-                            min={new Date().toISOString().split('T')[0]} // Disable past dates
+                            min={new Date().toISOString().split('T')[0]} 
                             onChange={(e) => setCheckInDate(e.target.value)}
                             className='w-full rounded-lg border border-gray-300 px-4 py-3 outline-orange-500'
                         />
                     </div>
 
-                    {/* Duration & Guests */}
                     <div className='flex gap-4 w-full md:w-1/3'>
                         <div className='flex flex-col w-1/2'>
                             <label className='font-medium text-gray-600 mb-2'>Duration (Hrs)</label>
@@ -270,7 +258,6 @@ const RoomDetails = () => {
                     </div>
                 </div>
 
-                {/* Time Slot Selection Grid */}
                 <div className='mb-8'>
                     <label className='font-medium text-gray-600 mb-3 block'>
                         Select Start Time
@@ -288,13 +275,12 @@ const RoomDetails = () => {
                                 return (
                                     <button
                                         key={slot}
-                                        type="button" // Prevent form submission
+                                        type="button" 
                                         disabled={isBooked}
                                         onClick={() => setStartTime(slot)}
                                         className={`
                                                 py-2 px-2 rounded-lg text-sm font-medium border transition-all
                                                 ${isBooked
-                                                // 👇 USE A MORE VISIBLE GRAY AND ADD THE DISABLED CURSOR
                                                 ? 'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed line-through'
                                                 : isSelected
                                                     ? 'bg-orange-500 text-white border-orange-500 shadow-md'
@@ -308,14 +294,10 @@ const RoomDetails = () => {
                             })}
                         </div>
                     )}
-                    {/* Legend */}
                     {checkInDate && (
                         <div className='flex gap-4 mt-3 text-xs text-gray-500'>
-                            {/* Available */}
                             <div className='flex items-center gap-1'><div className='w-3 h-3 bg-white border border-gray-300 rounded'></div> Available</div>
-                            {/* Selected */}
                             <div className='flex items-center gap-1'><div className='w-3 h-3 bg-orange-500 rounded'></div> Selected</div>
-                            {/* Booked (UPDATED VISUAL) */}
                             <div className='flex items-center gap-1'><div className='w-3 h-3 bg-gray-200 border border-gray-300 rounded'></div> Booked</div>
                         </div>
                     )}
