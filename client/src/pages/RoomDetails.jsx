@@ -153,7 +153,6 @@ const RoomDetails = () => {
                 <h1 className='text-3xl md:text-4xl font-playfair'>
                     {selectedProperty.roomType}
                 </h1>
-                <p className='text-xs font-inter py-1.5 px-3 text-white bg-orange-500 rounded-full'>20% OFF</p>
             </div>
 
             <div className='flex items-center gap-1 mt-2'>
